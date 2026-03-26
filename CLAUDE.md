@@ -16,12 +16,13 @@ go test ./...           # run tests
 ```
 
 ### Viewer (TypeScript/Solid.js)
+The `viewer/` directory uses **Bun** as the package manager and runtime (not npm).
 ```bash
 cd viewer
-npm install
-npm run dev             # dev server (Vite)
-npm run build           # production bundle
-npm run preview         # preview production build
+bun install
+bun run dev             # dev server (Vite)
+bun run build           # production bundle
+bun run preview         # preview production build
 ```
 
 ### Container
