@@ -4,6 +4,8 @@ Share sensitive text securely. The CLI encrypts your text and gives you a URL â€
 
 **The server never sees your text or passphrase.** Everything sensitive lives in the URL fragment (`#`), which browsers never transmit. Encryption and decryption happen entirely on your machine and in their browser.
 
+**URLs never expire.** The encrypted payload is self-contained in the URL â€” there is no server-side storage to delete. Once generated, a link works forever.
+
 ## Install
 
 ```bash

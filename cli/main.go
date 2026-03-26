@@ -75,6 +75,7 @@ func main() {
 
 	base := strings.TrimRight(viewerURL, "/")
 	fmt.Printf("%s/#%s\n", base, fragment)
+	fmt.Fprintln(os.Stderr, "note: this URL never expires")
 }
 
 // promptPassphrase reads a passphrase from /dev/tty (so stdin can be piped),
