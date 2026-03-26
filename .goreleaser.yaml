@@ -29,6 +29,7 @@ brews:
       owner: aren55555
       name: homebrew-tap
       token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
+    directory: Formula
     homepage: https://github.com/aren55555/txtshr
     description: Secure, zero-knowledge text sharing CLI
     install: |
