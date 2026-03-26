@@ -4,12 +4,16 @@ import (
 	"flag"
 	"fmt"
 	"io"
+	"net/url"
 	"os"
+	"regexp"
 	"strings"
 
 	"github.com/aren55555/txtshr/internal/crypto"
 	"golang.org/x/term"
 )
+
+var rendererSpecRe = regexp.MustCompile(`^[a-zA-Z0-9._-]+/[a-zA-Z0-9._-]+/[a-zA-Z0-9._-]+(@[a-zA-Z0-9._-]+)?$`)
 
 const defaultViewerURL = "https://txtshr.run/"
 
@@ -20,11 +24,17 @@ func main() {
 	text := flag.String("text", "", "Plaintext to encrypt (reads stdin if not provided)")
 	password := flag.String("password", "", "Passphrase for encryption (prompts interactively if not provided)")
 	versionFlag := flag.Bool("version", false, "Print version and exit")
+	rendererFlag := flag.String("renderer", "", "Renderer spec (owner/repo/name[@version])")
+	flag.StringVar(rendererFlag, "r", "", "Renderer spec (shorthand)")
 	flag.Parse()
 
 	if *versionFlag {
 		fmt.Println(version)
 		os.Exit(0)
+	}
+
+	if *rendererFlag != "" && !rendererSpecRe.MatchString(*rendererFlag) {
+		fatalf("invalid renderer spec %q: expected owner/repo/name[@version]", *rendererFlag)
 	}
 
 	// TXTSHR_VIEWER_URL env var takes precedence over --viewer-url flag.
@@ -71,6 +81,10 @@ func main() {
 	fragment, err := crypto.Encrypt(plaintext, passphrase)
 	if err != nil {
 		fatalf("encrypting: %v", err)
+	}
+
+	if *rendererFlag != "" {
+		fragment += "&r=" + url.QueryEscape(*rendererFlag)
 	}
 
 	base := strings.TrimRight(viewerURL, "/")
