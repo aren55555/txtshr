@@ -1,0 +1,20 @@
+#!/bin/bash
+set -e
+cd "$(dirname "$0")/.."
+
+# Use whichever container runtime is available and working
+if command -v docker &> /dev/null && docker info &> /dev/null; then
+    CONTAINER_CMD=docker
+elif command -v podman &> /dev/null && podman info &> /dev/null; then
+    CONTAINER_CMD=podman
+else
+    echo "Error: no working container runtime found (tried docker and podman)" >&2
+    exit 1
+fi
+
+$CONTAINER_CMD build \
+  --platform linux/amd64 \
+  -t aren55555/txtshr:latest \
+  -f viewer/Containerfile \
+  ./viewer
+$CONTAINER_CMD push aren55555/txtshr:latest
