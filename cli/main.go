@@ -11,7 +11,7 @@ import (
 	"golang.org/x/term"
 )
 
-const defaultViewerURL = "https://txtshr.example.com/"
+const defaultViewerURL = "https://txtshr.run/"
 
 func main() {
 	viewerURLFlag := flag.String("viewer-url", defaultViewerURL, "Base URL of the txtshr viewer")
