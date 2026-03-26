@@ -1,16 +1,7 @@
 const PBKDF2_ITERATIONS = 600_000;
 
-const base64urlDecode = (s: string): Uint8Array => {
-  // Restore standard base64 padding and alphabet.
-  const padded = s + "=".repeat((4 - (s.length % 4)) % 4);
-  const b64 = padded.replace(/-/g, "+").replace(/_/g, "/");
-  const binary = atob(b64);
-  const bytes = new Uint8Array(binary.length);
-  for (let i = 0; i < binary.length; i++) {
-    bytes[i] = binary.charCodeAt(i);
-  }
-  return bytes;
-}
+const base64urlDecode = (s: string): Uint8Array =>
+  Uint8Array.fromBase64(s, { alphabet: "base64url" });
 
 /**
  * Decrypts ciphertext using scheme v1: PBKDF2-SHA256 + AES-256-GCM.
