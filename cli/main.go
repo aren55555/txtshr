@@ -13,11 +13,19 @@ import (
 
 const defaultViewerURL = "https://txtshr.run/"
 
+var version = "dev"
+
 func main() {
 	viewerURLFlag := flag.String("viewer-url", defaultViewerURL, "Base URL of the txtshr viewer")
 	text := flag.String("text", "", "Plaintext to encrypt (reads stdin if not provided)")
 	password := flag.String("password", "", "Passphrase for encryption (prompts interactively if not provided)")
+	versionFlag := flag.Bool("version", false, "Print version and exit")
 	flag.Parse()
+
+	if *versionFlag {
+		fmt.Println(version)
+		os.Exit(0)
+	}
 
 	// TXTSHR_VIEWER_URL env var takes precedence over --viewer-url flag.
 	viewerURL := *viewerURLFlag
