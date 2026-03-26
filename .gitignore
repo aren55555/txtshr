@@ -5,5 +5,8 @@ cli/txtshr
 viewer/node_modules/
 viewer/dist/
 
+# GoReleaser
+dist/
+
 # OS
 .DS_Store

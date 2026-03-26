@@ -1,0 +1,37 @@
+version: 2
+
+project_name: txtshr
+
+builds:
+  - dir: cli
+    binary: txtshr
+    goos:
+      - darwin
+      - linux
+    goarch:
+      - amd64
+      - arm64
+    env:
+      - CGO_ENABLED=0
+    ldflags:
+      - -s -w
+
+archives:
+  - formats: [tar.gz]
+    name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}"
+
+checksum:
+  name_template: checksums.txt
+
+brews:
+  - name: txtshr
+    repository:
+      owner: aren55555
+      name: homebrew-tap
+      token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
+    homepage: https://github.com/aren55555/txtshr
+    description: Secure, zero-knowledge text sharing CLI
+    install: |
+      bin.install "txtshr"
+    test: |
+      system "#{bin}/txtshr", "--help"
