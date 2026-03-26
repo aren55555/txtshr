@@ -1,0 +1,9 @@
+# Go
+cli/txtshr
+
+# Viewer
+viewer/node_modules/
+viewer/dist/
+
+# OS
+.DS_Store
