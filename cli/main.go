@@ -30,6 +30,15 @@ func main() {
 	if *text != "" {
 		plaintext = []byte(*text)
 	} else {
+		// When reading from stdin, print a hint to stderr if stdin is a terminal
+		// (i.e. the user ran `txtshr` directly without piping anything in).
+		// Without this, the process silently blocks waiting for input, which looks
+		// like a hang. The hint goes to stderr so it never pollutes the URL written
+		// to stdout. We don't print it when stdin is a pipe because the data is
+		// already flowing — the hint would just be noise in a script.
+		if term.IsTerminal(int(os.Stdin.Fd())) {
+			fmt.Fprintln(os.Stderr, "reading from stdin (^D to finish)...")
+		}
 		var err error
 		plaintext, err = io.ReadAll(os.Stdin)
 		if err != nil {
