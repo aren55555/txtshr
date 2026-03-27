@@ -36,6 +36,35 @@ The recipient opens the URL, enters the passphrase, and sees the plaintext — n
 2. The encrypted payload is encoded into the URL fragment
 3. The recipient's browser decrypts it locally using the Web Crypto API — nothing is sent to the server
 
+```mermaid
+sequenceDiagram
+    actor Sender
+    participant CLI as txtshr CLI<br/>(local process)
+    actor Recipient
+    participant Browser as Recipient's Browser<br/>(viewer SPA)
+    participant Server as txtshr Server<br/>(txtshr.run)
+
+    Sender->>CLI: plaintext (stdin or --text)
+    Sender->>CLI: passphrase (via /dev/tty)
+
+    Note over CLI: 1. gen random salt (16 B) + nonce (12 B)<br/>2. PBKDF2-SHA256 (600k iters) → 256-bit key<br/>3. AES-256-GCM encrypt → ciphertext + auth tag<br/>4. Base64url-encode salt, nonce, ciphertext
+
+    CLI-->>Sender: https://txtshr.run/#v=1&s=…&n=…&c=…
+    Note over CLI,Sender: Everything sensitive is in the # fragment.<br/>Passphrase is never included.
+
+    Sender->>Recipient: share URL (any channel)
+
+    Recipient->>Browser: opens URL
+    Browser->>Server: GET /  (HTTP — fragment NOT sent)
+    Note over Browser,Server: RFC 3986: browsers never transmit<br/>the # fragment to the server.
+    Server-->>Browser: viewer SPA (HTML/JS/CSS)
+
+    Note over Browser: Parses window.location.hash locally.<br/>Extracts v, s, n, c (all Base64url)
+    Recipient->>Browser: enters passphrase
+    Note over Browser: Web Crypto API (in-browser):<br/>1. PBKDF2-SHA256 (600k iters) → 256-bit key<br/>2. AES-256-GCM decrypt + verify auth tag<br/>3. Render plaintext
+    Browser-->>Recipient: plaintext
+```
+
 ## Self-hosting the viewer
 
 The viewer at [txtshr.run](https://txtshr.run) is available for anyone to use. If you'd prefer to host it yourself:
