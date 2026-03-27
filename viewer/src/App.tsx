@@ -1,13 +1,15 @@
 import { createSignal, Match, Show, Switch } from "solid-js";
 import { decryptV1 } from "./crypto";
+import { formatRendererSpec, loadRenderer, parseRendererSpec, RendererSpec, resolveRendererURL } from "./renderer";
 
 interface FragmentParams {
   s: string;
   n: string;
   c: string;
+  rendererSpec: RendererSpec | null;
 }
 
-type AppState = "entry" | "decrypting" | "success" | "error";
+type AppState = "warn" | "entry" | "decrypting" | "rendering" | "success" | "renderer-error" | "error";
 
 const parseFragment = (): { ok: true; params: FragmentParams } | { ok: false; reason: "invalid" | "unsupported"; version?: string } => {
   const hash = window.location.hash.slice(1);
@@ -18,14 +20,18 @@ const parseFragment = (): { ok: true; params: FragmentParams } | { ok: false; re
   const s = p.get("s");
   const n = p.get("n");
   const c = p.get("c");
+  const r = p.get("r");
 
   if (!v || !s || !n || !c) return { ok: false, reason: "invalid" };
   if (v !== "1") return { ok: false, reason: "unsupported", version: v };
 
-  return { ok: true, params: { s, n, c } };
+  const rendererSpec = r !== null ? parseRendererSpec(r) : null;
+  if (r !== null && rendererSpec === null) return { ok: false, reason: "invalid" };
+
+  return { ok: true, params: { s, n, c, rendererSpec } };
 }
 
-function Card(props: { children: any }) {
+const Card = (props: { children: any }) => {
   return (
     <div class="w-full max-w-lg bg-slate-900 rounded-2xl shadow-2xl shadow-black/50 border border-slate-800 p-8">
       {props.children}
@@ -33,7 +39,7 @@ function Card(props: { children: any }) {
   );
 }
 
-function InfoPopup() {
+const InfoPopup = () => {
   return (
     <div class="relative inline-flex items-center group">
       <button
@@ -64,16 +70,31 @@ function InfoPopup() {
   );
 }
 
-function Brand() {
+const Brand = (props: { right?: any }) => {
   return (
     <div class="mb-6 flex items-center gap-2">
       <span class="font-mono text-2xl font-bold text-emerald-400 tracking-tight">txtshr</span>
       <InfoPopup />
+      <Show when={props.right !== undefined}>
+        <div class="ml-auto">{props.right}</div>
+      </Show>
     </div>
   );
 }
 
-export default function App() {
+const Spinner = (props: { label: string }) => {
+  return (
+    <div class="flex items-center gap-3 text-slate-400" aria-live="polite">
+      <svg class="animate-spin h-5 w-5 text-emerald-400 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+      </svg>
+      <span class="text-sm">{props.label}</span>
+    </div>
+  );
+}
+
+const App = () => {
   const parsed = parseFragment();
 
   if (!parsed.ok) {
@@ -93,11 +114,14 @@ export default function App() {
   }
 
   const { params } = parsed;
-  const [appState, setAppState] = createSignal<AppState>("entry");
+  const { rendererSpec } = params;
+  const [appState, setAppState] = createSignal<AppState>(rendererSpec !== null ? "warn" : "entry");
   const [passphrase, setPassphrase] = createSignal("");
   const [decryptedText, setDecryptedText] = createSignal("");
   const [errorMsg, setErrorMsg] = createSignal("");
   const [copied, setCopied] = createSignal(false);
+  const [activeRenderer, setActiveRenderer] = createSignal<RendererSpec | null>(rendererSpec);
+  let rendererContainer!: HTMLDivElement;
 
   const handleDecrypt = async (e: SubmitEvent) => {
     e.preventDefault();
@@ -108,7 +132,20 @@ export default function App() {
     try {
       const text = await decryptV1(params.s, params.n, params.c, passphrase());
       setDecryptedText(text);
-      setAppState("success");
+      if (rendererSpec !== null) {
+        setAppState("rendering");
+        // Yield so Solid can mount the renderer container div before we use it.
+        await new Promise<void>((resolve) => setTimeout(resolve, 0));
+        try {
+          const mod = await loadRenderer(resolveRendererURL(rendererSpec));
+          mod.render(rendererContainer, text);
+          setAppState("success");
+        } catch {
+          setAppState("renderer-error");
+        }
+      } else {
+        setAppState("success");
+      }
     } catch {
       setErrorMsg("Decryption failed — check your passphrase and try again.");
       setAppState("error");
@@ -124,8 +161,40 @@ export default function App() {
   return (
     <main class="min-h-screen flex items-center justify-center p-4">
       <Card>
-        <Brand />
+        <Brand right={appState() === "success" && rendererSpec !== null
+          ? <select
+              id="renderer-select"
+              value={activeRenderer() === null ? "__plaintext__" : "__remote__"}
+              onChange={(e) => setActiveRenderer(e.currentTarget.value === "__plaintext__" ? null : rendererSpec)}
+              class="bg-slate-800 border border-slate-700 rounded-lg px-2 py-1 text-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition"
+            >
+              <option value="__plaintext__">Plain text</option>
+              <option value="__remote__">{formatRendererSpec(rendererSpec!)}</option>
+            </select>
+          : undefined
+        } />
         <Switch>
+          <Match when={appState() === "warn"}>
+            <div class="space-y-4">
+              <div class="bg-amber-900/30 border border-amber-700/50 rounded-lg px-4 py-3 space-y-2">
+                <p class="text-sm font-semibold text-amber-300">Third-party renderer</p>
+                <p class="text-sm text-amber-200/80 leading-relaxed">
+                  This link uses a renderer from{" "}
+                  <code class="font-mono text-amber-100 bg-amber-900/50 px-1 rounded text-xs">
+                    {formatRendererSpec(rendererSpec!)}
+                  </code>
+                  . The renderer will receive access to the decrypted content. Only proceed if you trust this source.
+                </p>
+              </div>
+              <button
+                onClick={() => setAppState("entry")}
+                class="w-full bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white font-semibold rounded-lg px-4 py-2.5 transition focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-slate-900"
+              >
+                Proceed
+              </button>
+            </div>
+          </Match>
+
           <Match when={appState() === "entry" || appState() === "error"}>
             <form onSubmit={handleDecrypt} class="space-y-4">
               <div class="space-y-1.5">
@@ -159,17 +228,32 @@ export default function App() {
           </Match>
 
           <Match when={appState() === "decrypting"}>
-            <div class="flex items-center gap-3 text-slate-400" aria-live="polite">
-              <svg class="animate-spin h-5 w-5 text-emerald-400 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-              </svg>
-              <span class="text-sm">Decrypting…</span>
-            </div>
+            <Spinner label="Decrypting…" />
+          </Match>
+
+          <Match when={appState() === "rendering"}>
+            <Spinner label="Loading renderer…" />
           </Match>
 
           <Match when={appState() === "success"}>
             <div class="space-y-4">
+              <Show when={activeRenderer() === null}>
+                <pre class="bg-slate-950 border border-slate-800 rounded-lg p-4 text-sm text-slate-200 overflow-auto max-h-96 whitespace-pre-wrap break-words font-mono leading-relaxed">{decryptedText()}</pre>
+                <button
+                  onClick={handleCopy}
+                  class="w-full border border-slate-700 hover:border-slate-500 text-slate-300 hover:text-slate-100 font-medium rounded-lg px-4 py-2.5 transition focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 focus:ring-offset-slate-900"
+                >
+                  {copied() ? "Copied!" : "Copy to clipboard"}
+                </button>
+              </Show>
+            </div>
+          </Match>
+
+          <Match when={appState() === "renderer-error"}>
+            <div class="space-y-4">
+              <p role="alert" class="text-sm text-amber-400 bg-amber-950/40 border border-amber-900/50 rounded-lg px-4 py-2.5">
+                Renderer failed to load — showing plain text.
+              </p>
               <pre class="bg-slate-950 border border-slate-800 rounded-lg p-4 text-sm text-slate-200 overflow-auto max-h-96 whitespace-pre-wrap break-words font-mono leading-relaxed">{decryptedText()}</pre>
               <button
                 onClick={handleCopy}
@@ -180,7 +264,16 @@ export default function App() {
             </div>
           </Match>
         </Switch>
+
+        {/* Renderer container: mounted while loading and kept alive through success so
+            the renderer's DOM is not torn down when the state transitions or the
+            user toggles back to plain text view. */}
+        <Show when={rendererSpec !== null && (appState() === "rendering" || appState() === "success")}>
+          <div ref={rendererContainer} class={appState() === "rendering" || activeRenderer() === null ? "hidden" : "min-h-16"} />
+        </Show>
       </Card>
     </main>
   );
 }
+
+export default App;
