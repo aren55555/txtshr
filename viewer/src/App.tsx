@@ -100,13 +100,10 @@ const Footer = () => {
   const sha = __GIT_SHA__;
   const shortSha = sha.slice(0, 7);
   return (
-    <footer class="flex items-center gap-3 text-slate-500 text-xs">
-      <span>
-        Created by:{" "}
-        <a href="https://arenpatel.com" target="_blank" rel="noopener noreferrer" class="hover:text-slate-300 transition">
-          Aren Patel
-        </a>
-      </span>
+    <footer class="flex items-center gap-1.5 text-slate-500 text-xs">
+      <a href="https://arenpatel.com" target="_blank" rel="noopener noreferrer" class="hover:text-slate-300 transition">
+        Aren Patel
+      </a>
       <span aria-hidden="true">·</span>
       <a
         href="https://x.com/aren55555"
