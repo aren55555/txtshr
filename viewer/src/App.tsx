@@ -140,6 +140,34 @@ const Footer = () => {
   );
 }
 
+const InstallTabs = () => {
+  const [tab, setTab] = createSignal<"brew" | "go">("brew");
+  return (
+    <div>
+      <div class="flex gap-1 mb-2">
+        {(["brew", "go"] as const).map((t) => (
+          <button
+            type="button"
+            onClick={() => setTab(t)}
+            class={`px-3 py-1 rounded-md text-xs font-medium transition focus:outline-none focus:ring-2 focus:ring-emerald-500 ${
+              tab() === t
+                ? "bg-slate-700 text-slate-100"
+                : "text-slate-500 hover:text-slate-300"
+            }`}
+          >
+            {t === "brew" ? "Mac (brew)" : "go"}
+          </button>
+        ))}
+      </div>
+      <pre class="bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-sm text-emerald-300 font-mono overflow-x-auto">
+        {tab() === "brew"
+          ? "brew install aren55555/tap/txtshr"
+          : "go install github.com/aren55555/txtshr/cli@latest"}
+      </pre>
+    </div>
+  );
+}
+
 const LandingPage = () => {
   return (
     <main class="min-h-screen flex flex-col items-center justify-center gap-4 p-4">
@@ -155,7 +183,7 @@ const LandingPage = () => {
           <div class="space-y-4">
             <div>
               <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Install</p>
-              <pre class="bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-sm text-emerald-300 font-mono overflow-x-auto">go install github.com/aren55555/txtshr/cli@latest</pre>
+              <InstallTabs />
             </div>
             <div>
               <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Share text</p>
