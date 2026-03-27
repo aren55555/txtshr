@@ -36,7 +36,7 @@ const parseFragment = (): { ok: true; params: FragmentParams } | { ok: false; re
 
 const Card = (props: { children: any }) => {
   return (
-    <div class="w-full max-w-lg bg-slate-900 rounded-2xl shadow-2xl shadow-black/50 border border-slate-800 p-8">
+    <div class="w-full max-w-2xl bg-slate-900 rounded-2xl shadow-2xl shadow-black/50 border border-slate-800 p-8">
       {props.children}
     </div>
   );
@@ -75,11 +75,13 @@ const InfoPopup = () => {
 
 const Brand = (props: { right?: any }) => {
   return (
-    <div class="mb-6 flex items-center gap-2">
-      <span class="font-brand text-5xl font-bold text-emerald-400 tracking-tight">txtshr</span>
-      <InfoPopup />
+    <div class="mb-6 space-y-3">
+      <div class="flex items-center justify-center gap-2">
+        <span class="font-brand text-5xl font-bold text-emerald-400 tracking-tight">txtshr</span>
+        <InfoPopup />
+      </div>
       <Show when={props.right !== undefined}>
-        <div class="ml-auto">{props.right}</div>
+        <div class="flex justify-center">{props.right}</div>
       </Show>
     </div>
   );
@@ -141,9 +143,9 @@ const Footer = () => {
 const LandingPage = () => {
   return (
     <main class="min-h-screen flex flex-col items-center justify-center gap-4 p-4">
-      <div class="w-full max-w-lg space-y-4">
+      <div class="w-full max-w-2xl space-y-4">
         <Card>
-          <div class="mb-6 flex items-center gap-2">
+          <div class="mb-6 flex items-center justify-center gap-2">
             <span class="font-brand text-5xl font-bold text-emerald-400 tracking-tight">txtshr</span>
           </div>
           <p class="text-slate-300 text-sm leading-relaxed mb-6">
