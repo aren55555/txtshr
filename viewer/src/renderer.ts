@@ -52,14 +52,38 @@ export interface RemoteRenderer {
   render(el: HTMLElement, text: string): void | (() => void);
 }
 
+export interface LoadedRenderer {
+  renderer: RemoteRenderer;
+  /** Hex-encoded SHA-256 of the raw JS payload fetched from the CDN. */
+  hash: string;
+}
+
 /**
- * Dynamically import a renderer module from the given URL and validate its
- * exports. Throws if the module does not export a `render` function.
+ * Fetch a renderer module from the given URL, compute a SHA-256 fingerprint of
+ * the raw JS payload, then import it via a blob URL and validate its exports.
+ * Returns the renderer and its hash. Throws if the fetch fails, the module
+ * does not export a `render` function, or hashing is unavailable.
  */
-export const loadRenderer = async (url: string): Promise<RemoteRenderer> => {
-  const mod = await import(/* @vite-ignore */ url);
-  if (typeof mod.render !== "function") {
-    throw new Error(`Renderer at ${url} does not export a render function`);
+export const loadRenderer = async (url: string): Promise<LoadedRenderer> => {
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`Failed to fetch renderer (${response.status}): ${url}`);
   }
-  return mod as RemoteRenderer;
+  const jsText = await response.text();
+
+  const hashBuffer = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(jsText));
+  const hash = Array.from(new Uint8Array(hashBuffer))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+
+  const blobUrl = URL.createObjectURL(new Blob([jsText], { type: "application/javascript" }));
+  try {
+    const mod = await import(/* @vite-ignore */ blobUrl);
+    if (typeof mod.render !== "function") {
+      throw new Error(`Renderer at ${url} does not export a render function`);
+    }
+    return { renderer: mod as RemoteRenderer, hash };
+  } finally {
+    URL.revokeObjectURL(blobUrl);
+  }
 }

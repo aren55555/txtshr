@@ -1,6 +1,7 @@
-import { createSignal, Match, onMount, Show, Switch } from "solid-js";
+import { createResource, createSignal, Match, onMount, Show, Switch } from "solid-js";
 import { decryptV1 } from "./crypto";
 import { formatRendererSpec, loadRenderer, parseRendererSpec, RendererSpec, resolveRendererURL } from "./renderer";
+import { getTrustRecord, recordDiscovery, saveTrustRecord } from "./renderer-store";
 
 declare const __GIT_SHA__: string;
 
@@ -249,6 +250,17 @@ const App = () => {
   const [activeRenderer, setActiveRenderer] = createSignal<RendererSpec | null>(rendererSpec);
   let rendererContainer!: HTMLDivElement;
 
+  // Record that this renderer was encountered, regardless of whether the user proceeds.
+  if (rendererSpec !== null) {
+    const canonicalSpec = formatRendererSpec(rendererSpec);
+    recordDiscovery(canonicalSpec);
+  }
+
+  // Load the trust record so the warn screen can show familiarity context.
+  const [trustRecord] = rendererSpec !== null
+    ? createResource(() => getTrustRecord(formatRendererSpec(rendererSpec)))
+    : [() => null];
+
   const handleDecrypt = async (e: SubmitEvent) => {
     e.preventDefault();
     setAppState("decrypting");
@@ -263,8 +275,9 @@ const App = () => {
         // Yield so Solid can mount the renderer container div before we use it.
         await new Promise<void>((resolve) => setTimeout(resolve, 0));
         try {
-          const mod = await loadRenderer(resolveRendererURL(rendererSpec));
+          const { renderer: mod, hash } = await loadRenderer(resolveRendererURL(rendererSpec));
           mod.render(rendererContainer, text);
+          await saveTrustRecord(formatRendererSpec(rendererSpec), hash);
           setAppState("success");
         } catch {
           setAppState("renderer-error");
@@ -312,6 +325,11 @@ const App = () => {
                   . The renderer will receive access to the decrypted content. Only proceed if you trust this source.
                 </p>
               </div>
+              <Show when={trustRecord()}>
+                <p class="text-xs text-slate-500">
+                  Previously loaded — first seen {new Date(trustRecord()!.firstSeen).toLocaleDateString()}.
+                </p>
+              </Show>
               <button
                 onClick={() => setAppState("entry")}
                 class="w-full bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white font-semibold rounded-lg px-4 py-2.5 transition focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-slate-900"
