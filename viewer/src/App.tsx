@@ -75,7 +75,7 @@ const InfoPopup = () => {
 const Brand = (props: { right?: any }) => {
   return (
     <div class="mb-6 flex items-center gap-2">
-      <span class="font-mono text-2xl font-bold text-emerald-400 tracking-tight">txtshr</span>
+      <span class="font-brand text-5xl font-bold text-emerald-400 tracking-tight">txtshr</span>
       <InfoPopup />
       <Show when={props.right !== undefined}>
         <div class="ml-auto">{props.right}</div>
@@ -135,7 +135,7 @@ const LandingPage = () => {
       <div class="w-full max-w-lg space-y-4">
         <Card>
           <div class="mb-6 flex items-center gap-2">
-            <span class="font-mono text-2xl font-bold text-emerald-400 tracking-tight">txtshr</span>
+            <span class="font-brand text-5xl font-bold text-emerald-400 tracking-tight">txtshr</span>
           </div>
           <p class="text-slate-300 text-sm leading-relaxed mb-6">
             Share encrypted text via a URL. The passphrase never leaves your device — decryption happens entirely in your browser. Even the server can't read your message.

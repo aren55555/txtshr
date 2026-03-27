@@ -5,6 +5,9 @@
     "": {
       "name": "txtshr-viewer",
       "dependencies": {
+        "@fontsource-variable/inter": "^5.2.8",
+        "@fontsource/bytesized": "^5.2.4",
+        "@fontsource/funnel-display": "^5.2.8",
         "@tailwindcss/vite": "^4.2.2",
         "solid-js": "^1.9.0",
         "tailwindcss": "^4.2.2",
@@ -60,6 +63,12 @@
     "@emnapi/runtime": ["@emnapi/runtime@1.9.1", "", { "dependencies": { "tslib": "^2.4.0" } }, "sha512-VYi5+ZVLhpgK4hQ0TAjiQiZ6ol0oe4mBx7mVv7IflsiEp0OWoVsp/+f9Vc1hOhE0TtkORVrI1GvzyreqpgWtkA=="],
 
     "@emnapi/wasi-threads": ["@emnapi/wasi-threads@1.2.0", "", { "dependencies": { "tslib": "^2.4.0" } }, "sha512-N10dEJNSsUx41Z6pZsXU8FjPjpBEplgH24sfkmITrBED1/U2Esum9F3lfLrMjKHHjmi557zQn7kR9R+XWXu5Rg=="],
+
+    "@fontsource-variable/inter": ["@fontsource-variable/inter@5.2.8", "", {}, "sha512-kOfP2D+ykbcX/P3IFnokOhVRNoTozo5/JxhAIVYLpea/UBmCQ/YWPBfWIDuBImXX/15KH+eKh4xpEUyS2sQQGQ=="],
+
+    "@fontsource/bytesized": ["@fontsource/bytesized@5.2.4", "", {}, "sha512-hTtLUAd6AqH3wgIWSLH8tTWx8XYdUP17Miuxh3vGVElRD3ab5DbyrbTlLPR8bQMuJKyaz5yB/5eUfQrErU6PlA=="],
+
+    "@fontsource/funnel-display": ["@fontsource/funnel-display@5.2.8", "", {}, "sha512-B8T3S22P1j19z7UAbfiVhgP2ygghhA8kzVwb6mBYcuQLwXJIM/xdRGwagimJDXsuRX3Cg+bnkM4JGHTc4WCYxg=="],
 
     "@jridgewell/gen-mapping": ["@jridgewell/gen-mapping@0.3.13", "", { "dependencies": { "@jridgewell/sourcemap-codec": "^1.5.0", "@jridgewell/trace-mapping": "^0.3.24" } }, "sha512-2kkt/7niJ6MgEPxF0bYdQ6etZaA+fQvDcLKckhy1yIQOzaoKjBBjSj63/aLVjYE3qhRt5dvM+uUyfCg6UKCBbA=="],
 

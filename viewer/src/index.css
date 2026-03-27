@@ -1,7 +1,25 @@
+@import "@fontsource/bytesized";
+@import "@fontsource-variable/inter";
+@import "@fontsource/funnel-display";
 @import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-brand: "Bytesized", monospace;
+  --font-display: "Funnel Display", ui-sans-serif, system-ui, sans-serif;
+}
 
 @layer base {
   body {
-    @apply bg-slate-950 text-slate-100 min-h-screen;
+    @apply bg-slate-950 text-slate-100 min-h-screen font-sans;
   }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+  }
+}
+
+.font-brand {
+  -webkit-font-smoothing: none;
+  font-smooth: never;
 }
