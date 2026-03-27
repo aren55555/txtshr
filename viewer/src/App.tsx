@@ -2,6 +2,8 @@ import { createSignal, Match, Show, Switch } from "solid-js";
 import { decryptV1 } from "./crypto";
 import { formatRendererSpec, loadRenderer, parseRendererSpec, RendererSpec, resolveRendererURL } from "./renderer";
 
+declare const __GIT_SHA__: string;
+
 interface FragmentParams {
   s: string;
   n: string;
@@ -94,12 +96,48 @@ const Spinner = (props: { label: string }) => {
   );
 }
 
+const Footer = () => {
+  const sha = __GIT_SHA__;
+  const shortSha = sha.slice(0, 7);
+  return (
+    <footer class="flex items-center gap-3 text-slate-500 text-xs">
+      <span>
+        Created by:{" "}
+        <a href="https://arenpatel.com" target="_blank" rel="noopener noreferrer" class="hover:text-slate-300 transition">
+          Aren Patel
+        </a>
+      </span>
+      <span aria-hidden="true">·</span>
+      <a
+        href="https://x.com/aren55555"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="@aren55555 on X"
+        class="hover:text-slate-300 transition"
+      >
+        <svg class="w-3 h-3" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.259 5.633 5.905-5.633zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+        </svg>
+      </a>
+      <span aria-hidden="true">·</span>
+      <a
+        href={`https://github.com/aren55555/txtshr/commit/${sha}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="font-mono hover:text-slate-300 transition"
+      >
+        {shortSha}
+      </a>
+    </footer>
+  );
+}
+
 const App = () => {
   const parsed = parseFragment();
 
   if (!parsed.ok) {
     return (
-      <main class="min-h-screen flex items-center justify-center p-4">
+      <main class="min-h-screen flex flex-col items-center justify-center gap-4 p-4">
         <Card>
           <Brand />
           <p class="text-slate-400 text-sm leading-relaxed">
@@ -109,6 +147,7 @@ const App = () => {
             }
           </p>
         </Card>
+        <Footer />
       </main>
     );
   }
@@ -159,7 +198,7 @@ const App = () => {
   }
 
   return (
-    <main class="min-h-screen flex items-center justify-center p-4">
+    <main class="min-h-screen flex flex-col items-center justify-center gap-4 p-4">
       <Card>
         <Brand right={appState() === "success" && rendererSpec !== null
           ? <select
@@ -272,6 +311,7 @@ const App = () => {
           <div ref={rendererContainer} class={appState() === "rendering" || activeRenderer() === null ? "hidden" : "min-h-16"} />
         </Show>
       </Card>
+      <Footer />
     </main>
   );
 }

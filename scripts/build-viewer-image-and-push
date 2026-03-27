@@ -14,6 +14,7 @@ fi
 
 $CONTAINER_CMD build \
   --platform linux/amd64 \
+  --build-arg GIT_SHA="$(git rev-parse HEAD)" \
   -t aren55555/txtshr:latest \
   -f viewer/Containerfile \
   ./viewer
