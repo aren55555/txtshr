@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+open -na "Google Chrome" --args \
+  --new-window \
+  "http://localhost:5173/" \
+  "http://localhost:5173/#c=GU3MYZFgTtV0E6u1wdtVL8Saszq09JXR&n=IZ74Jk5_roD0Ntd1&s=FrhrwYF576OjBS2X0hF1qQ&v=1&r=aren55555%2Ftxtshr-renderers%2Fmarkdown" \
+  "http://localhost:5173/#c=SSViXfOj5hsVwiEjtcY2u_31j3ca8Gp6-m9J&n=MPmj4jptnrHgAjno&s=8ncR7SCFuO4ppcY_JGoReg&v=1"
