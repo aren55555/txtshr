@@ -4,57 +4,57 @@ import { splitCommandBrand } from "./splitCommandBrand";
 type Segment = { text: string; highlight: boolean };
 
 describe("splitCommandBrand", () => {
-  it.each<[string, string, Segment[]]>([
-    [
-      "highlights txtshr surrounded by spaces",
-      "echo txtshr foo",
-      [
+  it.each<{ desc: string; command: string; expected: Segment[] }>([
+    {
+      desc: "highlights txtshr surrounded by spaces",
+      command: "echo txtshr foo",
+      expected: [
         { text: "echo ", highlight: false },
         { text: "txtshr", highlight: true },
         { text: " foo", highlight: false },
       ],
-    ],
-    [
-      "does not highlight txtshr at the start of the string",
-      "txtshr foo",
-      [{ text: "txtshr foo", highlight: false }],
-    ],
-    [
-      "does not highlight txtshr at the end of the string",
-      "echo txtshr",
-      [{ text: "echo txtshr", highlight: false }],
-    ],
-    [
-      "does not highlight txtshr with no surrounding whitespace",
-      "notxtshrhere",
-      [{ text: "notxtshrhere", highlight: false }],
-    ],
-    [
-      "highlights multiple occurrences",
-      "cat file | txtshr | grep txtshr done",
-      [
+    },
+    {
+      desc: "does not highlight txtshr at the start of the string",
+      command: "txtshr foo",
+      expected: [{ text: "txtshr foo", highlight: false }],
+    },
+    {
+      desc: "does not highlight txtshr at the end of the string",
+      command: "echo txtshr",
+      expected: [{ text: "echo txtshr", highlight: false }],
+    },
+    {
+      desc: "does not highlight txtshr with no surrounding whitespace",
+      command: "notxtshrhere",
+      expected: [{ text: "notxtshrhere", highlight: false }],
+    },
+    {
+      desc: "highlights multiple occurrences",
+      command: "cat file | txtshr | grep txtshr done",
+      expected: [
         { text: "cat file | ", highlight: false },
         { text: "txtshr", highlight: true },
         { text: " | grep ", highlight: false },
         { text: "txtshr", highlight: true },
         { text: " done", highlight: false },
       ],
-    ],
-    [
-      "handles tabs and newlines as surrounding whitespace",
-      "run\ttxtshr\nhere",
-      [
+    },
+    {
+      desc: "handles tabs and newlines as surrounding whitespace",
+      command: "run\ttxtshr\nhere",
+      expected: [
         { text: "run\t", highlight: false },
         { text: "txtshr", highlight: true },
         { text: "\nhere", highlight: false },
       ],
-    ],
-    [
-      "returns a single non-highlighted segment for an empty string",
-      "",
-      [{ text: "", highlight: false }],
-    ],
-  ])("%s", (_, command, expected) => {
+    },
+    {
+      desc: "returns a single non-highlighted segment for an empty string",
+      command: "",
+      expected: [{ text: "", highlight: false }],
+    },
+  ])("$desc", ({ command, expected }) => {
     expect(splitCommandBrand(command)).toEqual(expected);
   });
 });
