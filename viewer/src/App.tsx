@@ -4,6 +4,8 @@ import TabbedSelector from "./TabbedSelector";
 import { decryptV1 } from "./crypto";
 import { formatRendererSpec, loadRenderer, parseRendererSpec, RendererSpec, resolveRendererURL } from "./renderer";
 import { getTrustRecord, recordDiscovery, saveTrustRecord } from "./renderer-store";
+import { IMG_URL } from "./constant";
+import { truncateUrl } from "./utils";
 
 declare const __GIT_SHA__: string;
 
@@ -168,6 +170,7 @@ const LandingPage = () => {
               <TabbedSelector tabs={[
                 { title: "Share text", content: <TerminalBlock command='echo "secret message" | txtshr -password demo' highlightBrand output={[<a href="https://txtshr.run/#c=66lCuX9ITDy4_3pt55cETSJoonKY6ZRt5cpV4fkV6A&n=vYbEaAamnXzfg4JN&s=3CdNmFsFwcuhpHDjuIEQjg&v=1" target="_blank" rel="noopener noreferrer" class="underline hover:text-violet-300">https://txtshr.run/#c=66lCuX9ITDy4_3pt55cETSJoonKY6ZRt5cpV4fkV6A&n=vYbEaAamnXzfg4JN&s=3CdNmFsFwcuhpHDjuIEQjg&v=1</a>]} /> },
                 { title: "Share a file", content: <TerminalBlock command="cat notes.txt | txtshr -password demo" highlightBrand output={[<a href="https://txtshr.run/#c=J8tvGjFMz0lBbwz0o4pbqZMFHU6rcSmv-Rq2ETygyUAE0Ms&n=RJXc2D1a8S4YlY4V&s=SY2UMBCqxhcYNqyYSUJ_eQ&v=1" target="_blank" rel="noopener noreferrer" class="underline hover:text-violet-300">https://txtshr.run/#c=J8tvGjFMz0lBbwz0o4pbqZMFHU6rcSmv-Rq2ETygyUAE0Ms&n=RJXc2D1a8S4YlY4V&s=SY2UMBCqxhcYNqyYSUJ_eQ&v=1</a>]} /> },
+                { title: "Share an image", content: <TerminalBlock command="cat notes.txt | txtshr -password demo" highlightBrand output={[<a href={IMG_URL} target="_blank" rel="noopener noreferrer" class="underline hover:text-violet-300">{truncateUrl(IMG_URL)}</a>]} /> },
               ]} />
             </div>
           </div>
