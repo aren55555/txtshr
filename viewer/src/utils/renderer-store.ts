@@ -21,10 +21,18 @@ export interface RendererStoreAdapter {
 const TRUST_KEY = "txtshr:renderer:trust";
 const DISCOVERY_KEY = "txtshr:renderer:discovery";
 
+export type LocalStorable = Pick<typeof localStorage, "getItem" | "setItem">;
+
 export class LocalStorageAdapter implements RendererStoreAdapter {
+  private readonly localStorage: LocalStorable;
+
+  constructor(storage: LocalStorable = globalThis.localStorage) {
+    this.localStorage = storage;
+  }
+
   async getTrustRecord(spec: string): Promise<TrustRecord | null> {
     try {
-      const raw = localStorage.getItem(TRUST_KEY);
+      const raw = this.localStorage.getItem(TRUST_KEY);
       if (!raw) return null;
       const store = JSON.parse(raw) as Record<string, TrustRecord>;
       return store[spec] ?? null;
@@ -35,11 +43,11 @@ export class LocalStorageAdapter implements RendererStoreAdapter {
 
   async saveTrustRecord(spec: string, hash: string): Promise<void> {
     try {
-      const raw = localStorage.getItem(TRUST_KEY);
+      const raw = this.localStorage.getItem(TRUST_KEY);
       const store: Record<string, TrustRecord> = raw ? JSON.parse(raw) : {};
       const now = Date.now();
       store[spec] = { hash, firstSeen: store[spec]?.firstSeen ?? now, lastSeen: now };
-      localStorage.setItem(TRUST_KEY, JSON.stringify(store));
+      this.localStorage.setItem(TRUST_KEY, JSON.stringify(store));
     } catch {
       // Silently ignore storage errors (private mode, quota exceeded, etc.)
     }
@@ -47,7 +55,7 @@ export class LocalStorageAdapter implements RendererStoreAdapter {
 
   async getDiscoveredRenderers(): Promise<DiscoveryRecord[]> {
     try {
-      const raw = localStorage.getItem(DISCOVERY_KEY);
+      const raw = this.localStorage.getItem(DISCOVERY_KEY);
       if (!raw) return [];
       return JSON.parse(raw) as DiscoveryRecord[];
     } catch {
@@ -57,7 +65,7 @@ export class LocalStorageAdapter implements RendererStoreAdapter {
 
   async recordDiscovery(spec: string): Promise<void> {
     try {
-      const raw = localStorage.getItem(DISCOVERY_KEY);
+      const raw = this.localStorage.getItem(DISCOVERY_KEY);
       const list: DiscoveryRecord[] = raw ? JSON.parse(raw) : [];
       const now = Date.now();
       const idx = list.findIndex((r) => r.spec === spec);
@@ -66,7 +74,7 @@ export class LocalStorageAdapter implements RendererStoreAdapter {
       } else {
         list[idx] = { ...list[idx], lastSeen: now, count: list[idx].count + 1 };
       }
-      localStorage.setItem(DISCOVERY_KEY, JSON.stringify(list));
+      this.localStorage.setItem(DISCOVERY_KEY, JSON.stringify(list));
     } catch {
       // Silently ignore storage errors
     }
