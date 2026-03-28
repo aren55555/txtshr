@@ -1,13 +1,14 @@
 import { For, JSX, Show } from "solid-js";
+import { splitCommandBrand } from "../utils/utils";
 
 const chrome = { text: "text-slate-700", border: "border-slate-700" };
 const brandColor = "text-emerald-400";
 
 const renderCommand = (command: string) =>
-  command.split("txtshr").flatMap((part, i, arr) =>
-    i < arr.length - 1
-      ? [<span class="text-slate-100">{part}</span>, <span class={brandColor}>txtshr</span>]
-      : [<span class="text-slate-100">{part}</span>]
+  splitCommandBrand(command).map(({ text, highlight }) =>
+    highlight
+      ? <span class={brandColor}>{text}</span>
+      : <span class="text-slate-100">{text}</span>
   );
 
 const TerminalBlock = (props: { command: string; output?: (string | JSX.Element)[]; highlightBrand?: boolean }) => {
