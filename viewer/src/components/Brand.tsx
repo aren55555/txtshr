@@ -5,7 +5,7 @@ const Brand = (props: { right?: JSX.Element }) => {
   return (
     <div class="mb-6 space-y-3">
       <div class="flex items-center justify-center gap-2">
-        <span class="font-brand text-5xl font-bold text-emerald-400 tracking-tight">txtshr</span>
+        <a href="/" class="font-brand text-5xl font-bold text-emerald-400 tracking-tight no-underline">txtshr</a>
         <InfoPopup />
       </div>
       <Show when={props.right !== undefined}>
