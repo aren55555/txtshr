@@ -17,6 +17,10 @@
     "build": "tsc",
     "prepublishOnly": "tsc"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aren55555/txtshr"
+  },
   "keywords": ["txtshr", "renderer"],
   "license": "MIT",
   "devDependencies": {
