@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { splitCommandBrand } from "./utils";
+import { splitCommandBrand } from "./splitCommandBrand";
 
 type Segment = { text: string; highlight: boolean };
 

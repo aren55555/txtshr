@@ -3,7 +3,7 @@ import TerminalBlock from "./TerminalBlock";
 import Card from "./Card";
 import Footer from "./Footer";
 import { IMG_URL } from "../utils/constant";
-import { truncateUrl } from "../utils/utils";
+import { truncateUrl } from "../utils/truncateUrl";
 
 const LandingPage = () => {
   return (

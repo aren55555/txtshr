@@ -1,5 +1,5 @@
 import { For, JSX, Show } from "solid-js";
-import { splitCommandBrand } from "../utils/utils";
+import { splitCommandBrand } from "../utils/splitCommandBrand";
 
 const chrome = { text: "text-slate-700", border: "border-slate-700" };
 const brandColor = "text-emerald-400";
