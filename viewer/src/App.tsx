@@ -45,7 +45,7 @@ const App = () => {
     return (
       <>
         <Show when={parsed.reason !== "empty"}>
-          <FragmentErrorToast reason={parsed.reason as "invalid" | "unsupported"} version={(parsed as any).version} />
+          <FragmentErrorToast reason={parsed.reason as "invalid" | "unsupported"} version={parsed.version} />
         </Show>
         <LandingPage />
       </>

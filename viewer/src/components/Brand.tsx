@@ -1,7 +1,7 @@
-import { Show } from "solid-js";
+import { JSX, Show } from "solid-js";
 import InfoPopup from "./InfoPopup";
 
-const Brand = (props: { right?: any }) => {
+const Brand = (props: { right?: JSX.Element }) => {
   return (
     <div class="mb-6 space-y-3">
       <div class="flex items-center justify-center gap-2">
