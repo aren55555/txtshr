@@ -1,4 +1,6 @@
-import { createResource, createSignal, Match, onMount, Show, Switch } from "solid-js";
+import { createResource, createSignal, For, Match, onMount, Show, Switch } from "solid-js";
+import TerminalBlock from "./TerminalBlock";
+import TabbedSelector from "./TabbedSelector";
 import { decryptV1 } from "./crypto";
 import { formatRendererSpec, loadRenderer, parseRendererSpec, RendererSpec, resolveRendererURL } from "./renderer";
 import { getTrustRecord, recordDiscovery, saveTrustRecord } from "./renderer-store";
@@ -140,33 +142,6 @@ const Footer = () => {
   );
 }
 
-const InstallTabs = () => {
-  const [tab, setTab] = createSignal<"brew" | "go">("brew");
-  return (
-    <div>
-      <div class="flex gap-1 mb-2">
-        {(["brew", "go"] as const).map((t) => (
-          <button
-            type="button"
-            onClick={() => setTab(t)}
-            class={`px-3 py-1 rounded-md text-xs font-medium transition focus:outline-none focus:ring-2 focus:ring-emerald-500 ${
-              tab() === t
-                ? "bg-slate-700 text-slate-100"
-                : "text-slate-500 hover:text-slate-300"
-            }`}
-          >
-            {t === "brew" ? "Mac (brew)" : "go"}
-          </button>
-        ))}
-      </div>
-      <pre class="bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-sm text-emerald-300 font-mono overflow-x-auto">
-        {tab() === "brew"
-          ? "brew install aren55555/tap/txtshr"
-          : "go install github.com/aren55555/txtshr/cli@latest"}
-      </pre>
-    </div>
-  );
-}
 
 const LandingPage = () => {
   return (
@@ -183,15 +158,17 @@ const LandingPage = () => {
           <div class="space-y-4">
             <div>
               <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Install</p>
-              <InstallTabs />
+              <TabbedSelector tabs={[
+                { title: "Mac (brew)", content: <TerminalBlock command="brew install aren55555/tap/txtshr" /> },
+                { title: "go", content: <TerminalBlock command="go install github.com/aren55555/txtshr/cli@latest" /> },
+              ]} />
             </div>
             <div>
-              <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Share text</p>
-              <pre class="bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-sm text-emerald-300 font-mono overflow-x-auto">echo "secret message" | txtshr</pre>
-            </div>
-            <div>
-              <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Share a file</p>
-              <pre class="bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-sm text-emerald-300 font-mono overflow-x-auto">cat notes.txt | txtshr</pre>
+              <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Usage</p>
+              <TabbedSelector tabs={[
+                { title: "Share text", content: <TerminalBlock command='echo "secret message" | txtshr -password demo' output={["https://txtshr.run/#c=66lCuX9ITDy4_3pt55cETSJoonKY6ZRt5cpV4fkV6A&n=vYbEaAamnXzfg4JN&s=3CdNmFsFwcuhpHDjuIEQjg&v=1"]} /> },
+                { title: "Share a file", content: <TerminalBlock command="cat notes.txt | txtshr" /> },
+              ]} />
             </div>
           </div>
 
