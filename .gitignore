@@ -1,8 +1,9 @@
 # Go
 cli/txtshr
 
-# Viewer
+# Node
 viewer/node_modules/
+renderer-types/node_modules/
 viewer/dist/
 
 # GoReleaser
