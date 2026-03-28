@@ -1,6 +1,6 @@
 {
   "name": "txtshr-renderer",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "description": "TypeScript interface for txtshr remote renderers",
   "types": "dist/index.d.ts",
   "main": "dist/index.js",
