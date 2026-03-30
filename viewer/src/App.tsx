@@ -192,9 +192,6 @@ const App = () => {
       .sort((a, b) => b.lastSeen - a.lastSeen);
   };
 
-  const hasDropdown = () =>
-    appState() === "success" &&
-    (rendererSpec !== null || previousRenderers().length > 0);
 
   const activeRendererValue = () => {
     if (activeRenderer() === null) return "__plaintext__";
@@ -207,35 +204,40 @@ const App = () => {
   return (
     <main class="min-h-screen flex flex-col items-center justify-center gap-4 p-4">
       <Card>
-        <Brand right={hasDropdown()
+        <Brand right={appState() === "success"
           ? <div class="flex items-center gap-2">
               <RendererSelect
-                id="renderer-select"
-                value={activeRendererValue()}
-                onChange={(val) => {
-                  if (val === "__plaintext__") {
-                    if (refs.cleanupRenderer) { refs.cleanupRenderer(); refs.cleanupRenderer = null; }
-                    setActiveRenderer(null);
-                  } else if (val === "__url_renderer__") {
-                    handleRendererChange(rendererSpec!);
-                  } else {
-                    const spec = parseRendererSpec(val);
-                    if (spec) handleRendererChange(spec);
-                  }
-                }}
-                options={[
-                  { value: "__plaintext__", label: "Plain text" },
-                  ...(rendererSpec !== null ? [{ value: "__url_renderer__", label: formatRendererSpec(rendererSpec) }] : []),
-                ]}
-                groups={previousRenderers().length > 0 ? [{
-                  label: "Previously used",
-                  options: previousRenderers().map((r) => ({
-                    value: r.spec,
-                    label: r.spec,
-                    subtitle: `Last used ${relativeTime(r.lastSeen)}`,
-                  })),
-                }] : undefined}
-              />
+                  id="renderer-select"
+                  value={activeRendererValue()}
+                  onChange={(val) => {
+                    if (val === "__plaintext__") {
+                      if (refs.cleanupRenderer) { refs.cleanupRenderer(); refs.cleanupRenderer = null; }
+                      setActiveRenderer(null);
+                    } else if (val === "__url_renderer__") {
+                      handleRendererChange(rendererSpec!);
+                    } else {
+                      const spec = parseRendererSpec(val);
+                      if (spec) handleRendererChange(spec);
+                    }
+                  }}
+                  options={[
+                    { value: "__plaintext__", label: "Plain text" },
+                  ]}
+                  groups={[
+                    ...(rendererSpec !== null ? [{
+                      label: "Suggested by this link",
+                      options: [{ value: "__url_renderer__", label: formatRendererSpec(rendererSpec), subtitle: trustRecord()?.lastSeen ? `Last used ${relativeTime(trustRecord()!.lastSeen)}` : undefined }],
+                    }] : []),
+                    ...(previousRenderers().length > 0 ? [{
+                      label: "Previously used",
+                      options: previousRenderers().map((r) => ({
+                        value: r.spec,
+                        label: r.spec,
+                        subtitle: `Last used ${relativeTime(r.lastSeen)}`,
+                      })),
+                    }] : []),
+                  ]}
+                />
               <button
                 type="button"
                 onClick={() => setSettingsOpen(true)}
@@ -249,7 +251,7 @@ const App = () => {
             </div>
           : undefined
         } />
-        <Show when={hasDropdown()}>
+        <Show when={appState() === "success"}>
           <hr class="border-slate-700 mb-6" />
         </Show>
         <Switch>
