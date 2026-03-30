@@ -4,6 +4,7 @@ import {
   LocalStorable,
   setRendererStoreAdapter,
   getTrustRecord,
+  getTrustedRenderers,
   saveTrustRecord,
   getDiscoveredRenderers,
   recordDiscovery,
@@ -71,6 +72,42 @@ describe("LocalStorageAdapter", () => {
       await adapter.saveTrustRecord("owner/repo/b", "hashB");
       expect((await adapter.getTrustRecord("owner/repo/a"))!.hash).toBe("hashA");
       expect((await adapter.getTrustRecord("owner/repo/b"))!.hash).toBe("hashB");
+    });
+  });
+
+  describe("getTrustedRenderers", () => {
+    it("returns an empty array when no trust records exist", async () => {
+      const { adapter } = prepare();
+      expect(await adapter.getTrustedRenderers()).toEqual([]);
+    });
+
+    it("returns an empty array when localStorage contains malformed JSON", async () => {
+      const { adapter, storage } = prepare();
+      storage.setItem("txtshr:renderer:trust", "{bad json}");
+      expect(await adapter.getTrustedRenderers()).toEqual([]);
+    });
+
+    it("returns a record for each trusted spec", async () => {
+      const { adapter } = prepare();
+      await adapter.saveTrustRecord("owner/repo/a", "hashA");
+      await adapter.saveTrustRecord("owner/repo/b", "hashB");
+      const trusted = await adapter.getTrustedRenderers();
+      expect(trusted).toHaveLength(2);
+      const specA = trusted.find((r) => r.spec === "owner/repo/a");
+      const specB = trusted.find((r) => r.spec === "owner/repo/b");
+      expect(specA!.hash).toBe("hashA");
+      expect(specB!.hash).toBe("hashB");
+    });
+
+    it("includes firstSeen, lastSeen, and hash in each record", async () => {
+      const { adapter } = prepare();
+      await adapter.saveTrustRecord("owner/repo/name", "abc123");
+      const trusted = await adapter.getTrustedRenderers();
+      expect(trusted).toHaveLength(1);
+      expect(trusted[0].spec).toBe("owner/repo/name");
+      expect(trusted[0].hash).toBe("abc123");
+      expect(typeof trusted[0].firstSeen).toBe("number");
+      expect(typeof trusted[0].lastSeen).toBe("number");
     });
   });
 
@@ -142,6 +179,22 @@ describe("module-level wrappers", () => {
     await saveTrustRecord("owner/repo/name", "deadbeef");
     const record = await getTrustRecord("owner/repo/name");
     expect(record!.hash).toBe("deadbeef");
+  });
+
+  it("getTrustedRenderers returns empty array initially", async () => {
+    const { adapter } = prepare();
+    setRendererStoreAdapter(adapter);
+    expect(await getTrustedRenderers()).toEqual([]);
+  });
+
+  it("getTrustedRenderers returns saved records", async () => {
+    const { adapter } = prepare();
+    setRendererStoreAdapter(adapter);
+    await saveTrustRecord("owner/repo/name", "deadbeef");
+    const trusted = await getTrustedRenderers();
+    expect(trusted).toHaveLength(1);
+    expect(trusted[0].spec).toBe("owner/repo/name");
+    expect(trusted[0].hash).toBe("deadbeef");
   });
 
   it("getDiscoveredRenderers returns empty array initially", async () => {

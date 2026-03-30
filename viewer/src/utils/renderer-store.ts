@@ -13,6 +13,7 @@ export interface DiscoveryRecord {
 
 export interface RendererStoreAdapter {
   getTrustRecord(spec: string): Promise<TrustRecord | null>;
+  getTrustedRenderers(): Promise<Array<{ spec: string } & TrustRecord>>;
   saveTrustRecord(spec: string, hash: string): Promise<void>;
   getDiscoveredRenderers(): Promise<DiscoveryRecord[]>;
   recordDiscovery(spec: string): Promise<void>;
@@ -38,6 +39,17 @@ export class LocalStorageAdapter implements RendererStoreAdapter {
       return store[spec] ?? null;
     } catch {
       return null;
+    }
+  }
+
+  async getTrustedRenderers(): Promise<Array<{ spec: string } & TrustRecord>> {
+    try {
+      const raw = this.localStorage.getItem(TRUST_KEY);
+      if (!raw) return [];
+      const store = JSON.parse(raw) as Record<string, TrustRecord>;
+      return Object.entries(store).map(([spec, record]) => ({ spec, ...record }));
+    } catch {
+      return [];
     }
   }
 
@@ -88,6 +100,7 @@ export const setRendererStoreAdapter = (adapter: RendererStoreAdapter): void => 
 };
 
 export const getTrustRecord = (spec: string) => activeAdapter.getTrustRecord(spec);
+export const getTrustedRenderers = () => activeAdapter.getTrustedRenderers();
 export const saveTrustRecord = (spec: string, hash: string) => activeAdapter.saveTrustRecord(spec, hash);
 export const getDiscoveredRenderers = () => activeAdapter.getDiscoveredRenderers();
 export const recordDiscovery = (spec: string) => activeAdapter.recordDiscovery(spec);

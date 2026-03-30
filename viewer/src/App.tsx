@@ -1,9 +1,11 @@
 import { createResource, createSignal, Match, onMount, Show, Switch } from "solid-js";
 import { decryptV1 } from "./utils/crypto";
-import { formatRendererSpec, loadRenderer, parseRendererSpec, RendererSpec, resolveRendererURL } from "./utils/renderer";
-import { getTrustRecord, recordDiscovery, saveTrustRecord } from "./utils/renderer-store";
+import { formatRendererSpec, loadRenderer, LoadedRenderer, parseRendererSpec, RendererSpec, resolveRendererURL } from "./utils/renderer";
+import { getTrustRecord, getTrustedRenderers, recordDiscovery, saveTrustRecord } from "./utils/renderer-store";
+import { relativeTime } from "./utils/relativeTime";
 import Card from "./components/Card";
 import Brand from "./components/Brand";
+import RendererSelect from "./components/RendererSelect";
 import Spinner from "./components/Spinner";
 import Footer from "./components/Footer";
 import LandingPage from "./components/LandingPage";
@@ -16,7 +18,7 @@ interface FragmentParams {
   rendererSpec: RendererSpec | null;
 }
 
-type AppState = "warn" | "entry" | "decrypting" | "rendering" | "success" | "renderer-error" | "error";
+type AppState = "trust-check" | "warn" | "entry" | "decrypting" | "rendering" | "success" | "renderer-error" | "error";
 
 const parseFragment = (): { ok: true; params: FragmentParams } | { ok: false; reason: "empty" | "invalid" | "unsupported"; version?: string } => {
   const hash = window.location.hash.slice(1);
@@ -38,6 +40,7 @@ const parseFragment = (): { ok: true; params: FragmentParams } | { ok: false; re
   return { ok: true, params: { s, n, c, rendererSpec } };
 }
 
+
 const App = () => {
   const parsed = parseFragment();
 
@@ -54,13 +57,23 @@ const App = () => {
 
   const { params } = parsed;
   const { rendererSpec } = params;
-  const [appState, setAppState] = createSignal<AppState>(rendererSpec !== null ? "warn" : "entry");
+  const [appState, setAppState] = createSignal<AppState>(rendererSpec !== null ? "trust-check" : "entry");
   const [passphrase, setPassphrase] = createSignal("");
   const [decryptedText, setDecryptedText] = createSignal("");
   const [errorMsg, setErrorMsg] = createSignal("");
   const [copied, setCopied] = createSignal(false);
   const [activeRenderer, setActiveRenderer] = createSignal<RendererSpec | null>(rendererSpec);
-  let rendererContainer!: HTMLDivElement;
+  const [rendererSwitching, setRendererSwitching] = createSignal(false);
+  // Mutable instance variables grouped into a const object to avoid let bindings.
+  const refs = {
+    rendererContainer: null as HTMLDivElement | null,
+    // Cached renderer from the trust-check pre-fetch (reused during rendering phase).
+    cachedRenderer: null as LoadedRenderer | null,
+    // Whether the pre-fetched hash differs from the stored trust record hash.
+    rendererHashChanged: false,
+    // Cleanup function returned by the active renderer's render() call.
+    cleanupRenderer: null as (() => void) | null,
+  };
 
   // Record that this renderer was encountered, regardless of whether the user proceeds.
   if (rendererSpec !== null) {
@@ -72,6 +85,36 @@ const App = () => {
   const [trustRecord] = rendererSpec !== null
     ? createResource(() => getTrustRecord(formatRendererSpec(rendererSpec)))
     : [() => null];
+
+  // Load previously approved renderers for the dropdown.
+  const [trustedRenderers] = createResource(() => getTrustedRenderers());
+
+  // When there is a renderer spec, pre-fetch it immediately so we can:
+  //   1. Compare its hash to the stored trust record (skip warn if they match).
+  //   2. Cache the loaded module to avoid re-fetching during the rendering phase.
+  if (rendererSpec !== null) {
+    onMount(async () => {
+      const canonicalSpec = formatRendererSpec(rendererSpec);
+      const [loadResult, trust] = await Promise.allSettled([
+        loadRenderer(resolveRendererURL(rendererSpec)),
+        getTrustRecord(canonicalSpec),
+      ]);
+
+      if (loadResult.status === "fulfilled") {
+        refs.cachedRenderer = loadResult.value;
+        const stored = trust.status === "fulfilled" ? trust.value : null;
+        if (stored && stored.hash === refs.cachedRenderer.hash) {
+          setAppState("entry"); // trusted, same hash — skip warning
+        } else {
+          refs.rendererHashChanged = stored !== null && stored.hash !== refs.cachedRenderer.hash;
+          setAppState("warn");
+        }
+      } else {
+        // Pre-fetch failed; show warn as usual (loadRenderer will fail again at render time).
+        setAppState("warn");
+      }
+    });
+  }
 
   const handleDecrypt = async (e: SubmitEvent) => {
     e.preventDefault();
@@ -87,9 +130,10 @@ const App = () => {
         // Yield so Solid can mount the renderer container div before we use it.
         await new Promise<void>((resolve) => setTimeout(resolve, 0));
         try {
-          const { renderer: mod, hash } = await loadRenderer(resolveRendererURL(rendererSpec));
-          mod.render(rendererContainer, text);
-          await saveTrustRecord(formatRendererSpec(rendererSpec), hash);
+          const loaded = refs.cachedRenderer ?? await loadRenderer(resolveRendererURL(rendererSpec));
+          const cleanup = loaded.renderer.render(refs.rendererContainer!, text);
+          refs.cleanupRenderer = cleanup ?? null;
+          await saveTrustRecord(formatRendererSpec(rendererSpec), loaded.hash);
           setAppState("success");
         } catch {
           setAppState("renderer-error");
@@ -109,22 +153,93 @@ const App = () => {
     setTimeout(() => setCopied(false), 2000);
   }
 
+  const handleRendererChange = async (spec: RendererSpec | null) => {
+    setActiveRenderer(spec);
+    if (spec === null) return;
+
+    const canonicalSpec = formatRendererSpec(spec);
+    // If the renderer to switch to is already cached (same as URL renderer), reuse it.
+    const isCachedSpec = rendererSpec !== null && canonicalSpec === formatRendererSpec(rendererSpec);
+    const existing = isCachedSpec ? refs.cachedRenderer : null;
+
+    setRendererSwitching(true);
+    try {
+      const loaded = existing ?? await loadRenderer(resolveRendererURL(spec));
+      // Clean up the previous renderer and clear the container.
+      if (refs.cleanupRenderer) {
+        refs.cleanupRenderer();
+        refs.cleanupRenderer = null;
+      }
+      refs.rendererContainer!.innerHTML = "";
+      const cleanup = loaded.renderer.render(refs.rendererContainer!, decryptedText());
+      refs.cleanupRenderer = cleanup ?? null;
+      await saveTrustRecord(canonicalSpec, loaded.hash);
+    } catch {
+      // If switching fails, fall back to plain text.
+      setActiveRenderer(null);
+    } finally {
+      setRendererSwitching(false);
+    }
+  }
+
+  // Renderers available in the dropdown: trusted renderers excluding the current URL renderer.
+  const previousRenderers = () => {
+    const currentSpec = rendererSpec !== null ? formatRendererSpec(rendererSpec) : null;
+    return (trustedRenderers() ?? [])
+      .filter((r) => r.spec !== currentSpec)
+      .sort((a, b) => b.lastSeen - a.lastSeen);
+  };
+
+  const hasDropdown = () =>
+    appState() === "success" &&
+    (rendererSpec !== null || previousRenderers().length > 0);
+
+  const activeRendererValue = () => {
+    if (activeRenderer() === null) return "__plaintext__";
+    const spec = activeRenderer()!;
+    const canonical = formatRendererSpec(spec);
+    const isUrlRenderer = rendererSpec !== null && canonical === formatRendererSpec(rendererSpec);
+    return isUrlRenderer ? "__url_renderer__" : canonical;
+  };
+
   return (
     <main class="min-h-screen flex flex-col items-center justify-center gap-4 p-4">
       <Card>
-        <Brand right={appState() === "success" && rendererSpec !== null
-          ? <select
+        <Brand right={hasDropdown()
+          ? <RendererSelect
               id="renderer-select"
-              value={activeRenderer() === null ? "__plaintext__" : "__remote__"}
-              onChange={(e) => setActiveRenderer(e.currentTarget.value === "__plaintext__" ? null : rendererSpec)}
-              class="bg-slate-800 border border-slate-700 rounded-lg px-2 py-1 text-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition"
-            >
-              <option value="__plaintext__">Plain text</option>
-              <option value="__remote__">{formatRendererSpec(rendererSpec!)}</option>
-            </select>
+              value={activeRendererValue()}
+              onChange={(val) => {
+                if (val === "__plaintext__") {
+                  if (refs.cleanupRenderer) { refs.cleanupRenderer(); refs.cleanupRenderer = null; }
+                  setActiveRenderer(null);
+                } else if (val === "__url_renderer__") {
+                  handleRendererChange(rendererSpec!);
+                } else {
+                  const spec = parseRendererSpec(val);
+                  if (spec) handleRendererChange(spec);
+                }
+              }}
+              options={[
+                { value: "__plaintext__", label: "Plain text" },
+                ...(rendererSpec !== null ? [{ value: "__url_renderer__", label: formatRendererSpec(rendererSpec) }] : []),
+              ]}
+              groups={previousRenderers().length > 0 ? [{
+                label: "Previously used",
+                options: previousRenderers().map((r) => ({
+                  value: r.spec,
+                  label: r.spec,
+                  subtitle: `Last used ${relativeTime(r.lastSeen)}`,
+                })),
+              }] : undefined}
+            />
           : undefined
         } />
         <Switch>
+          <Match when={appState() === "trust-check"}>
+            <Spinner label="Checking renderer…" />
+          </Match>
+
           <Match when={appState() === "warn"}>
             <div class="space-y-4">
               <div class="bg-amber-900/30 border border-amber-700/50 rounded-lg px-4 py-3 space-y-2">
@@ -136,6 +251,9 @@ const App = () => {
                   </code>
                   . The renderer will receive access to the decrypted content. Only proceed if you trust this source.
                 </p>
+                <Show when={refs.rendererHashChanged}>
+                  <p class="text-xs text-amber-400">Renderer code has changed since your last visit.</p>
+                </Show>
               </div>
               <Show when={trustRecord()}>
                 <p class="text-xs text-slate-500">
@@ -224,8 +342,14 @@ const App = () => {
         {/* Renderer container: mounted while loading and kept alive through success so
             the renderer's DOM is not torn down when the state transitions or the
             user toggles back to plain text view. */}
-        <Show when={rendererSpec !== null && (appState() === "rendering" || appState() === "success")}>
-          <div ref={rendererContainer} class={appState() === "rendering" || activeRenderer() === null ? "hidden" : "min-h-16"} />
+        <Show when={appState() === "rendering" || (appState() === "success" && activeRenderer() !== null)}>
+          <div
+            ref={el => (refs.rendererContainer = el)}
+            class={appState() === "rendering" || rendererSwitching() ? "hidden" : "min-h-16"}
+          />
+        </Show>
+        <Show when={rendererSwitching()}>
+          <Spinner label="Loading renderer…" />
         </Show>
       </Card>
       <Footer />
