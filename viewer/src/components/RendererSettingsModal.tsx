@@ -50,6 +50,7 @@ const RendererSettingsModal = (props: {
                   {(r) => (
                     <li class="bg-slate-800 border border-slate-700 rounded-lg px-3 py-2.5 space-y-2">
                       <p class="text-sm text-slate-200 font-mono break-all">{r.spec}</p>
+                      <p class="text-xs text-slate-500 font-mono" title={r.hash}>SHA-256: {r.hash.slice(0, 16)}…</p>
                       <div class="flex items-center justify-between gap-3">
                         <div class="text-xs text-slate-500 space-y-0.5">
                           <p>First seen {new Date(r.firstSeen).toLocaleDateString()}</p>
