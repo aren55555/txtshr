@@ -3,16 +3,16 @@ import { z } from "zod";
 // Non-empty strings containing only alphanumeric characters, dots,
 // underscores, and hyphens — safe to embed in URL path segments without
 // encoding and free of path-traversal sequences (e.g. `..`).
-const SafeSegment = z.string().regex(/^[a-zA-Z0-9._-]+$/);
+const SAFE_SEGMENT = z.string().regex(/^[a-zA-Z0-9._-]+$/);
 
-const RendererSpecSchema = z.object({
-  owner: SafeSegment,
-  repo: SafeSegment,
-  name: SafeSegment,
-  version: SafeSegment,
+const RENDERER_SPEC_SCHEMA = z.object({
+  owner: SAFE_SEGMENT,
+  repo: SAFE_SEGMENT,
+  name: SAFE_SEGMENT,
+  version: SAFE_SEGMENT,
 });
 
-export type RendererSpec = z.infer<typeof RendererSpecSchema>;
+export type RendererSpec = z.infer<typeof RENDERER_SPEC_SCHEMA>;
 
 /**
  * Parse a renderer spec string of the form `owner/repo/name[@version]`.
@@ -27,7 +27,7 @@ export const parseRendererSpec = (raw: string): RendererSpec | null => {
   if (parts.length !== 3) return null;
 
   const [owner, repo, name] = parts;
-  const result = RendererSpecSchema.safeParse({ owner, repo, name, version });
+  const result = RENDERER_SPEC_SCHEMA.safeParse({ owner, repo, name, version });
   return result.success ? result.data : null;
 }
 

@@ -1,15 +1,24 @@
-export interface TrustRecord {
-  hash: string;
-  firstSeen: number;
-  lastSeen: number;
-}
+import { z } from "zod";
 
-export interface DiscoveryRecord {
-  spec: string;
-  firstSeen: number;
-  lastSeen: number;
-  count: number;
-}
+export const TRUST_RECORD_SCHEMA = z.object({
+  hash: z.string(),
+  firstSeen: z.number(),
+  lastSeen: z.number(),
+});
+
+export type TrustRecord = z.infer<typeof TRUST_RECORD_SCHEMA>;
+
+export const DISCOVERY_RECORD_SCHEMA = z.object({
+  spec: z.string(),
+  firstSeen: z.number(),
+  lastSeen: z.number(),
+  count: z.number(),
+});
+
+export type DiscoveryRecord = z.infer<typeof DISCOVERY_RECORD_SCHEMA>;
+
+const TRUST_STORE_SCHEMA = z.record(z.string(), TRUST_RECORD_SCHEMA);
+const DISCOVERY_STORE_SCHEMA = z.array(DISCOVERY_RECORD_SCHEMA);
 
 export interface RendererStoreAdapter {
   getTrustRecord(spec: string): Promise<TrustRecord | null>;
@@ -36,7 +45,7 @@ export class LocalStorageAdapter implements RendererStoreAdapter {
     try {
       const raw = this.localStorage.getItem(TRUST_KEY);
       if (!raw) return null;
-      const store = JSON.parse(raw) as Record<string, TrustRecord>;
+      const store = TRUST_STORE_SCHEMA.parse(JSON.parse(raw));
       return store[spec] ?? null;
     } catch {
       return null;
@@ -47,7 +56,7 @@ export class LocalStorageAdapter implements RendererStoreAdapter {
     try {
       const raw = this.localStorage.getItem(TRUST_KEY);
       if (!raw) return [];
-      const store = JSON.parse(raw) as Record<string, TrustRecord>;
+      const store = TRUST_STORE_SCHEMA.parse(JSON.parse(raw));
       return Object.entries(store).map(([spec, record]) => ({ spec, ...record }));
     } catch {
       return [];
@@ -57,7 +66,7 @@ export class LocalStorageAdapter implements RendererStoreAdapter {
   async saveTrustRecord(spec: string, hash: string): Promise<void> {
     try {
       const raw = this.localStorage.getItem(TRUST_KEY);
-      const store: Record<string, TrustRecord> = raw ? JSON.parse(raw) : {};
+      const store = raw ? TRUST_STORE_SCHEMA.parse(JSON.parse(raw)) : {};
       const now = Date.now();
       store[spec] = { hash, firstSeen: store[spec]?.firstSeen ?? now, lastSeen: now };
       this.localStorage.setItem(TRUST_KEY, JSON.stringify(store));
@@ -70,7 +79,7 @@ export class LocalStorageAdapter implements RendererStoreAdapter {
     try {
       const raw = this.localStorage.getItem(TRUST_KEY);
       if (!raw) return;
-      const store = TrustStoreSchema.parse(JSON.parse(raw));
+      const store = TRUST_STORE_SCHEMA.parse(JSON.parse(raw));
       delete store[spec];
       this.localStorage.setItem(TRUST_KEY, JSON.stringify(store));
     } catch {
@@ -82,7 +91,7 @@ export class LocalStorageAdapter implements RendererStoreAdapter {
     try {
       const raw = this.localStorage.getItem(DISCOVERY_KEY);
       if (!raw) return [];
-      return JSON.parse(raw) as DiscoveryRecord[];
+      return DISCOVERY_STORE_SCHEMA.parse(JSON.parse(raw));
     } catch {
       return [];
     }
@@ -91,7 +100,7 @@ export class LocalStorageAdapter implements RendererStoreAdapter {
   async recordDiscovery(spec: string): Promise<void> {
     try {
       const raw = this.localStorage.getItem(DISCOVERY_KEY);
-      const list: DiscoveryRecord[] = raw ? JSON.parse(raw) : [];
+      const list = raw ? DISCOVERY_STORE_SCHEMA.parse(JSON.parse(raw)) : [];
       const now = Date.now();
       const idx = list.findIndex((r) => r.spec === spec);
       if (idx === -1) {

@@ -6,6 +6,7 @@ import { relativeTime } from "./utils/relativeTime";
 import Card from "./components/Card";
 import Brand from "./components/Brand";
 import RendererSelect from "./components/RendererSelect";
+import RendererSettingsModal from "./components/RendererSettingsModal";
 import Spinner from "./components/Spinner";
 import Footer from "./components/Footer";
 import LandingPage from "./components/LandingPage";
@@ -87,7 +88,8 @@ const App = () => {
     : [() => null];
 
   // Load previously approved renderers for the dropdown.
-  const [trustedRenderers] = createResource(() => getTrustedRenderers());
+  const [trustedRenderers, { refetch: refetchTrustedRenderers }] = createResource(() => getTrustedRenderers());
+  const [settingsOpen, setSettingsOpen] = createSignal(false);
 
   // When there is a renderer spec, pre-fetch it immediately so we can:
   //   1. Compare its hash to the stored trust record (skip warn if they match).
@@ -206,35 +208,50 @@ const App = () => {
     <main class="min-h-screen flex flex-col items-center justify-center gap-4 p-4">
       <Card>
         <Brand right={hasDropdown()
-          ? <RendererSelect
-              id="renderer-select"
-              value={activeRendererValue()}
-              onChange={(val) => {
-                if (val === "__plaintext__") {
-                  if (refs.cleanupRenderer) { refs.cleanupRenderer(); refs.cleanupRenderer = null; }
-                  setActiveRenderer(null);
-                } else if (val === "__url_renderer__") {
-                  handleRendererChange(rendererSpec!);
-                } else {
-                  const spec = parseRendererSpec(val);
-                  if (spec) handleRendererChange(spec);
-                }
-              }}
-              options={[
-                { value: "__plaintext__", label: "Plain text" },
-                ...(rendererSpec !== null ? [{ value: "__url_renderer__", label: formatRendererSpec(rendererSpec) }] : []),
-              ]}
-              groups={previousRenderers().length > 0 ? [{
-                label: "Previously used",
-                options: previousRenderers().map((r) => ({
-                  value: r.spec,
-                  label: r.spec,
-                  subtitle: `Last used ${relativeTime(r.lastSeen)}`,
-                })),
-              }] : undefined}
-            />
+          ? <div class="flex items-center gap-2">
+              <RendererSelect
+                id="renderer-select"
+                value={activeRendererValue()}
+                onChange={(val) => {
+                  if (val === "__plaintext__") {
+                    if (refs.cleanupRenderer) { refs.cleanupRenderer(); refs.cleanupRenderer = null; }
+                    setActiveRenderer(null);
+                  } else if (val === "__url_renderer__") {
+                    handleRendererChange(rendererSpec!);
+                  } else {
+                    const spec = parseRendererSpec(val);
+                    if (spec) handleRendererChange(spec);
+                  }
+                }}
+                options={[
+                  { value: "__plaintext__", label: "Plain text" },
+                  ...(rendererSpec !== null ? [{ value: "__url_renderer__", label: formatRendererSpec(rendererSpec) }] : []),
+                ]}
+                groups={previousRenderers().length > 0 ? [{
+                  label: "Previously used",
+                  options: previousRenderers().map((r) => ({
+                    value: r.spec,
+                    label: r.spec,
+                    subtitle: `Last used ${relativeTime(r.lastSeen)}`,
+                  })),
+                }] : undefined}
+              />
+              <button
+                type="button"
+                onClick={() => setSettingsOpen(true)}
+                class="text-slate-400 hover:text-slate-200 transition focus:outline-none"
+                aria-label="Renderer settings"
+              >
+                <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M7.84 1.804A1 1 0 0 1 8.82 1h2.36a1 1 0 0 1 .98.804l.331 1.652a6.993 6.993 0 0 1 1.929 1.115l1.598-.54a1 1 0 0 1 1.186.447l1.18 2.044a1 1 0 0 1-.205 1.251l-1.267 1.113a7.047 7.047 0 0 1 0 2.228l1.267 1.113a1 1 0 0 1 .206 1.25l-1.18 2.045a1 1 0 0 1-1.187.447l-1.598-.54a6.993 6.993 0 0 1-1.929 1.115l-.33 1.652a1 1 0 0 1-.98.804H8.82a1 1 0 0 1-.98-.804l-.331-1.652a6.993 6.993 0 0 1-1.929-1.115l-1.598.54a1 1 0 0 1-1.186-.447l-1.18-2.044a1 1 0 0 1 .205-1.251l1.267-1.114a7.05 7.05 0 0 1 0-2.227L1.821 7.773a1 1 0 0 1-.206-1.25l1.18-2.045a1 1 0 0 1 1.187-.447l1.598.54A6.992 6.992 0 0 1 7.51 3.456l.33-1.652ZM10 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clip-rule="evenodd" />
+                </svg>
+              </button>
+            </div>
           : undefined
         } />
+        <Show when={hasDropdown()}>
+          <hr class="border-slate-700 mb-6" />
+        </Show>
         <Switch>
           <Match when={appState() === "trust-check"}>
             <Spinner label="Checking renderer…" />
@@ -353,6 +370,12 @@ const App = () => {
         </Show>
       </Card>
       <Footer />
+      <Show when={settingsOpen()}>
+        <RendererSettingsModal
+          onClose={() => setSettingsOpen(false)}
+          onForget={() => refetchTrustedRenderers()}
+        />
+      </Show>
     </main>
   );
 }
