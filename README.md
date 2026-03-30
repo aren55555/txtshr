@@ -65,6 +65,41 @@ sequenceDiagram
     Browser-->>Recipient: plaintext
 ```
 
+## Custom renderers
+
+By default the viewer displays decrypted text as plain text. You can attach a custom renderer to a link to display it differently — as Markdown, a code file, a chart, or anything else.
+
+### Using a renderer
+
+Pass the renderer spec via the `--renderer` (or `-r`) flag:
+
+```bash
+txtshr --renderer owner/repo/name --text "# Hello"
+```
+
+Or append it manually to any existing txtshr URL:
+
+```
+https://txtshr.run/#v=1&s=…&n=…&c=…&r=owner/repo/name
+```
+
+The viewer will warn you before loading any third-party renderer, since it will receive access to the decrypted content.
+
+### Building a renderer
+
+A renderer is an ES module hosted on GitHub. It must export a `render` function:
+
+```ts
+export function render(el: HTMLElement, text: string): void | (() => void) {
+  // Write your output into `el`.
+  // Optionally return a cleanup function called when the renderer is unmounted.
+}
+```
+
+The [`txtshr-renderer`](https://www.npmjs.com/package/txtshr-renderer) npm package provides TypeScript types for the renderer interface.
+
+Publish your repo with the built file at `dist/<name>.js` and reference it in a txtshr URL as `owner/repo/name` (optionally pinned to a tag with `@version`). The viewer fetches the module from [jsDelivr](https://www.jsdelivr.com/) at `cdn.jsdelivr.net/gh/owner/repo@version/dist/name.js`.
+
 ## Self-hosting the viewer
 
 The viewer at [txtshr.run](https://txtshr.run) is available for anyone to use. If you'd prefer to host it yourself:
