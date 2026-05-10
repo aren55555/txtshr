@@ -3,6 +3,7 @@ import TerminalBlock from "./TerminalBlock";
 import Card from "./Card";
 import Footer from "./Footer";
 import { IMG_FRAGMENT } from "../utils/constant";
+import { TAGLINE, FRAGMENT_PREAMBLE, LANDING_FRAGMENT_NOTE_AFTER_HASH } from "../marketing";
 import { truncateUrl } from "../utils/truncateUrl";
 
 const LandingPage = () => {
@@ -16,7 +17,7 @@ const LandingPage = () => {
             <span class="font-brand text-5xl font-bold text-emerald-400 tracking-tight">txtshr</span>
           </div>
           <p class="text-slate-300 text-sm leading-relaxed mb-6">
-            Share encrypted text via a URL. The passphrase never leaves your device — decryption happens entirely in your browser. Even the server can't read your message.
+            {TAGLINE}
           </p>
 
           <div class="space-y-4">
@@ -44,7 +45,7 @@ const LandingPage = () => {
                 <path fill-rule="evenodd" d="M10 1a4.5 4.5 0 00-4.5 4.5V9H5a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-.5V5.5A4.5 4.5 0 0010 1zm3 8V5.5a3 3 0 10-6 0V9h6z" clip-rule="evenodd" />
               </svg>
               <p class="text-sm text-slate-400 leading-relaxed">
-                The URL fragment (everything after <code class="font-mono text-slate-400 bg-slate-800 px-1 rounded">#</code>) is never sent to any server — it's a browser guarantee. Encryption uses AES-256-GCM with PBKDF2-SHA256 key derivation.
+                {FRAGMENT_PREAMBLE}<code class="font-mono text-slate-400 bg-slate-800 px-1 rounded">#</code>{LANDING_FRAGMENT_NOTE_AFTER_HASH}
               </p>
             </div>
           </div>

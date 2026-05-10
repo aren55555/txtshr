@@ -1,3 +1,5 @@
+import { ZERO_KNOWLEDGE_LABEL, HOW_IT_WORKS_AFTER_BRAND, FRAGMENT_PREAMBLE, NEVER_SENT, FRAGMENT_GUARANTEE_TAIL } from "../marketing";
+
 const InfoPopup = () => {
   return (
     <div class="relative inline-flex items-center group">
@@ -15,12 +17,12 @@ const InfoPopup = () => {
         class="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-72 opacity-0 group-hover:opacity-100 transition-opacity duration-150 z-10"
       >
         <div class="bg-slate-800 border border-slate-700 rounded-xl shadow-xl p-4 text-sm text-slate-300 leading-relaxed">
-          <p class="font-semibold text-slate-100 mb-2">100% zero-knowledge</p>
+          <p class="font-semibold text-slate-100 mb-2">{ZERO_KNOWLEDGE_LABEL}</p>
           <p class="mb-2">
-            <strong class="text-emerald-400">txtshr</strong> lets you share encrypted text via a URL. The passphrase never leaves your device — decryption happens entirely in your browser using the Web Crypto API.
+            <strong class="text-emerald-400">txtshr</strong>{HOW_IT_WORKS_AFTER_BRAND}
           </p>
           <p>
-            The URL fragment (everything after <code class="font-mono text-slate-200 bg-slate-900 px-1 rounded">#</code>) is <em>never sent to any server</em> — it's a browser guarantee. Even we can't read your message.
+            {FRAGMENT_PREAMBLE}<code class="font-mono text-slate-200 bg-slate-900 px-1 rounded">#</code>) is <em>{NEVER_SENT}</em>{FRAGMENT_GUARANTEE_TAIL}
           </p>
         </div>
         <div class="w-2.5 h-2.5 bg-slate-800 border-r border-b border-slate-700 rotate-45 mx-auto -mt-1.5" />
