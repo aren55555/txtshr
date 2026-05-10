@@ -7,6 +7,7 @@
   --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
   --font-brand: "Bytesized", monospace;
   --font-display: "Funnel Display", ui-sans-serif, system-ui, sans-serif;
+  --duration-page-fade: 0.5s;
 }
 
 @layer base {
@@ -22,4 +23,13 @@
 .font-brand {
   -webkit-font-smoothing: none;
   font-smooth: never;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-fade-in {
+  animation: fade-in var(--duration-page-fade) ease-in-out both;
 }

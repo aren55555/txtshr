@@ -1,3 +1,4 @@
+import { createSignal, onMount } from "solid-js";
 import TabbedSelector from "./TabbedSelector";
 import TerminalBlock from "./TerminalBlock";
 import Card from "./Card";
@@ -9,13 +10,26 @@ import { truncateUrl } from "../utils/truncateUrl";
 const LandingPage = () => {
   const origin = window.location.origin;
   const url = (fragment: string) => `${origin}/${fragment}`;
+  const [visible, setVisible] = createSignal(false);
+  onMount(() => { document.fonts.ready.then(() => setVisible(true)); });
   return (
-    <main class="min-h-screen flex flex-col items-center justify-center gap-4 p-4">
+    <main class={`min-h-screen flex flex-col items-center justify-center gap-4 p-4 ${visible() ? "animate-fade-in" : "opacity-0"}`}>
       <div class="w-full max-w-2xl space-y-4">
+        <div class="flex flex-col items-center gap-1 mb-6">
+          <span class="font-brand text-8xl font-bold text-emerald-400 tracking-tight">txtshr</span>
+          <a
+            href="https://github.com/aren55555/txtshr"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-slate-700 text-slate-400 text-xs hover:border-slate-500 hover:text-slate-200 transition"
+          >
+            <svg class="w-3 h-3" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
+            </svg>
+            Open Source
+          </a>
+        </div>
         <Card>
-          <div class="mb-6 flex items-center justify-center gap-2">
-            <span class="font-brand text-5xl font-bold text-emerald-400 tracking-tight">txtshr</span>
-          </div>
           <p class="text-slate-300 text-sm leading-relaxed mb-6">
             {TAGLINE}
           </p>
@@ -24,6 +38,15 @@ const LandingPage = () => {
             <div>
               <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Install</p>
               <TabbedSelector tabs={[
+                { title: "Mobile", content: (
+                  <div class="bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 flex flex-col items-center gap-1.5">
+                    <div class="flex items-center justify-center gap-3 opacity-40">
+                      <img src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg" alt="Download on the App Store" class="h-10 pointer-events-none" />
+                      <img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get it on Google Play" class="h-[60px] pointer-events-none" />
+                    </div>
+                    <p class="text-xs text-slate-500 tracking-widest uppercase">Apps Coming Soon</p>
+                  </div>
+                )},
                 { title: "Mac (brew)", content: <TerminalBlock command="brew install aren55555/tap/txtshr" /> },
                 { title: "go", content: <TerminalBlock command="go install github.com/aren55555/txtshr/cli@latest" /> },
               ]} />
@@ -50,19 +73,6 @@ const LandingPage = () => {
             </div>
           </div>
         </Card>
-        <div class="flex justify-center">
-          <a
-            href="https://github.com/aren55555/txtshr"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="flex items-center gap-2 text-slate-500 hover:text-slate-300 text-xs transition"
-          >
-            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-              <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
-            </svg>
-            View source on GitHub
-          </a>
-        </div>
         <div class="flex justify-center">
           <Footer />
         </div>
