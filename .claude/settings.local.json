@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mise ls *)",
+      "Bash(mise ls-remote *)",
+      "Bash(mise plugin *)"
+    ]
+  }
+}
