@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>txtshr — Brand</title>
+  <link rel="icon" href="../viewer/public/favicon.png">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/bytesized/index.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300..800&family=Inter:opsz,wght@14..32,100..900&display=swap" rel="stylesheet">
+  <style>
+    /* ── Reset ───────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ── Fonts ───────────────────────────────────────────────── */
+    :root {
+      --font-sans:    'Inter', ui-sans-serif, system-ui, sans-serif;
+      --font-brand:   'Bytesized', 'Courier New', monospace;
+      --font-display: 'Funnel Display', ui-sans-serif, system-ui, sans-serif;
+    }
+
+    /* ── Base ────────────────────────────────────────────────── */
+    body {
+      background: var(--slate-950);
+      color: var(--slate-100);
+      font-family: var(--font-sans);
+      font-size: 13px;
+      line-height: 1.6;
+      min-height: 100vh;
+      background-image: radial-gradient(circle, var(--slate-800) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(ellipse 80% 60% at 50% 40%, transparent 30%, var(--slate-950) 100%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Layout ──────────────────────────────────────────────── */
+    .page {
+      position: relative;
+      z-index: 1;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 56px 40px 100px;
+    }
+
+    /* ── Header ──────────────────────────────────────────────── */
+    .page-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 56px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--slate-800);
+    }
+    .page-title {
+      font-family: var(--font-display);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--slate-500);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    .page-subtitle {
+      font-size: 11px;
+      color: var(--slate-600);
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* ── Sections ────────────────────────────────────────────── */
+    section { margin-bottom: 60px; }
+    section:last-child { margin-bottom: 0; }
+    .section-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--slate-600);
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--slate-800);
+    }
+
+    /* ── Mark ────────────────────────────────────────────────── */
+    .mark-grid {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 48px;
+      align-items: center;
+    }
+    .mark-icon-wrap {
+      width: 128px;
+      height: 128px;
+      border-radius: 22px;
+      overflow: hidden;
+      border: 1px solid var(--slate-800);
+      box-shadow: 0 0 0 1px var(--slate-800), 0 8px 32px rgba(0,0,0,.5);
+      flex-shrink: 0;
+    }
+    .mark-icon { width: 100%; height: 100%; display: block; }
+    .wordmark {
+      font-family: var(--font-brand);
+      font-size: 88px;
+      font-weight: 700;
+      color: var(--emerald-400);
+      line-height: 1;
+      -webkit-font-smoothing: none;
+      font-smooth: never;
+      letter-spacing: -0.01em;
+    }
+    .wordmark-specs { display: flex; flex-direction: column; gap: 5px; margin-top: 14px; }
+    .spec-row { display: flex; align-items: center; gap: 10px; font-size: 11px; }
+    .spec-key { color: var(--slate-600); min-width: 80px; }
+    .spec-val {
+      font-family: 'Courier New', monospace;
+      font-size: 10px;
+      color: var(--slate-400);
+      background: var(--slate-900);
+      border: 1px solid var(--slate-800);
+      padding: 2px 7px;
+      border-radius: 4px;
+    }
+
+    /* ── SVG asset ───────────────────────────────────────────── */
+    .svg-asset {
+      margin-top: 32px;
+      background: var(--slate-900);
+      border: 1px solid var(--slate-800);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .svg-asset-preview {
+      padding: 32px 28px;
+      display: flex;
+      align-items: center;
+      background-image:
+        linear-gradient(45deg, var(--slate-800) 25%, transparent 25%),
+        linear-gradient(-45deg, var(--slate-800) 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, var(--slate-800) 75%),
+        linear-gradient(-45deg, transparent 75%, var(--slate-800) 75%);
+      background-size: 12px 12px;
+      background-position: 0 0, 0 6px, 6px -6px, -6px 0px;
+      background-color: var(--slate-900);
+    }
+    .svg-asset-preview img { height: 56px; width: auto; }
+    .svg-asset-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      border-top: 1px solid var(--slate-800);
+      gap: 12px;
+    }
+    .svg-asset-name { font-family: 'Courier New', monospace; font-size: 11px; color: var(--slate-500); }
+    .svg-asset-note { font-size: 10px; color: var(--slate-600); flex: 1; }
+    .svg-download {
+      font-size: 11px;
+      color: var(--emerald-400);
+      text-decoration: none;
+      font-family: var(--font-sans);
+      padding: 3px 10px;
+      border: 1px solid color-mix(in srgb, var(--emerald-400) 25%, transparent);
+      border-radius: 5px;
+      white-space: nowrap;
+      transition: background 0.15s;
+    }
+    .svg-download:hover { background: color-mix(in srgb, var(--emerald-400) 10%, transparent); }
+
+    /* ── Typography ──────────────────────────────────────────── */
+    .type-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .type-card {
+      background: var(--slate-900);
+      border: 1px solid var(--slate-800);
+      border-radius: 12px;
+      padding: 22px 20px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .type-card-meta { display: flex; flex-direction: column; gap: 2px; }
+    .type-card-name { font-size: 12px; font-weight: 600; color: var(--slate-100); }
+    .type-card-role { font-size: 10px; color: var(--slate-500); }
+    .type-divider   { height: 1px; background: var(--slate-800); }
+    .type-sample    { flex: 1; }
+    .sample-bytesized {
+      font-family: var(--font-brand);
+      font-size: 40px;
+      font-weight: 700;
+      color: var(--emerald-400);
+      line-height: 1;
+      -webkit-font-smoothing: none;
+      font-smooth: never;
+    }
+    .sample-display {
+      font-family: var(--font-display);
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--slate-100);
+      line-height: 1.2;
+    }
+    .sample-sans {
+      font-family: var(--font-sans);
+      font-size: 14px;
+      color: var(--slate-300);
+      line-height: 1.5;
+    }
+    .type-spec { font-family: 'Courier New', monospace; font-size: 10px; color: var(--slate-600); line-height: 1.5; }
+
+    /* ── Palette ─────────────────────────────────────────────── */
+    .palette       { display: flex; flex-direction: column; gap: 28px; }
+    .palette-group { display: flex; flex-direction: column; gap: 10px; }
+    .palette-group-name {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--slate-500);
+    }
+    .swatches { display: flex; gap: 8px; flex-wrap: wrap; }
+    .swatch {
+      width: 114px;
+      border-radius: 9px;
+      overflow: hidden;
+      border: 1px solid var(--slate-800);
+    }
+    .swatch-chip { height: 68px; }
+    .swatch-info {
+      background: var(--slate-900);
+      padding: 8px 10px 9px;
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
+    .swatch-tw  { font-family: 'Courier New', monospace; font-size: 10px; font-weight: 700; color: var(--slate-200); }
+    .swatch-val { font-family: 'Courier New', monospace; font-size: 9px; color: var(--slate-500); line-height: 1.4; word-break: break-all; }
+    .swatch-use { font-size: 10px; color: var(--slate-600); margin-top: 3px; line-height: 1.3; }
+
+    /* ── UI Conventions ─────────────────────────────────────── */
+    .convention-grid { display: flex; flex-direction: column; gap: 20px; }
+    .convention-card {
+      background: var(--slate-900);
+      border: 1px solid var(--slate-800);
+      border-radius: 12px;
+      padding: 22px 20px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .convention-title { font-size: 12px; font-weight: 600; color: var(--slate-100); }
+    .convention-desc { font-size: 11px; color: var(--slate-400); line-height: 1.6; }
+    .convention-desc strong { color: var(--slate-300); font-weight: 600; }
+    .convention-examples { display: flex; flex-direction: column; gap: 8px; }
+    .convention-row { display: flex; align-items: center; gap: 8px; }
+    .convention-label { font-size: 10px; color: var(--slate-500); min-width: 90px; }
+    .convention-chip {
+      font-family: 'Courier New', monospace;
+      font-size: 10px;
+      color: var(--slate-300);
+      background: var(--slate-800);
+      border: 1px solid var(--slate-700);
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+    .convention-sep { font-size: 10px; color: var(--slate-600); }
+    .convention-live { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; }
+
+    /* ── Asset catalog ──────────────────────────────────────── */
+    .asset-subgroup { margin-bottom: 36px; }
+    .asset-subgroup:last-child { margin-bottom: 0; }
+    .asset-subgroup-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--slate-500);
+      margin-bottom: 12px;
+    }
+    .icon-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+    .icon-chip {
+      width: 120px;
+      background: var(--slate-900);
+      border: 1px solid var(--slate-800);
+      border-radius: 9px;
+      overflow: hidden;
+    }
+    .icon-chip-preview {
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-image:
+        linear-gradient(45deg, var(--slate-800) 25%, transparent 25%),
+        linear-gradient(-45deg, var(--slate-800) 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, var(--slate-800) 75%),
+        linear-gradient(-45deg, transparent 75%, var(--slate-800) 75%);
+      background-size: 10px 10px;
+      background-position: 0 0, 0 5px, 5px -5px, -5px 0px;
+      background-color: var(--slate-900);
+    }
+    .icon-chip-img { max-width: 48px; max-height: 48px; display: block; image-rendering: pixelated; }
+    .icon-chip-info { padding: 7px 9px 9px; display: flex; flex-direction: column; gap: 2px; }
+    .icon-chip-name { font-family: 'Courier New', monospace; font-size: 9px; color: var(--slate-300); word-break: break-all; line-height: 1.3; }
+    .icon-chip-meta { font-size: 9px; color: var(--slate-500); margin-top: 1px; }
+    .icon-chip-usage { font-size: 9px; color: var(--slate-600); }
+    .splash-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-start; }
+    .splash-thumb {
+      background: var(--slate-900);
+      border: 1px solid var(--slate-800);
+      border-radius: 9px;
+      overflow: hidden;
+    }
+    .splash-thumb-preview {
+      height: 160px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px;
+      background: var(--slate-950);
+    }
+    .splash-thumb-preview img {
+      max-height: 136px;
+      max-width: 120px;
+      display: block;
+      border-radius: 3px;
+      box-shadow: 0 2px 12px rgba(0,0,0,.5);
+    }
+    .splash-thumb-info { padding: 7px 9px 9px; display: flex; flex-direction: column; gap: 2px; }
+    .wide-asset-img { max-width: 100%; height: auto; display: block; border-radius: 4px; }
+
+    /* ── Lightbox ────────────────────────────────────────────── */
+    .icon-chip-preview img,
+    .splash-thumb-preview img,
+    .svg-asset-preview img,
+    .mark-icon { cursor: zoom-in; }
+    dialog.lightbox { background: transparent; border: none; padding: 0; outline: none; max-width: 90vw; max-height: 90vh; }
+    dialog.lightbox::backdrop { background: rgba(0,0,0,.88); cursor: zoom-out; }
+    dialog.lightbox img { display: block; max-width: 90vw; max-height: 90vh; object-fit: contain; border-radius: 8px; box-shadow: 0 0 0 1px rgba(255,255,255,.08), 0 24px 64px rgba(0,0,0,.6); }
+
+    /* ── Responsive ──────────────────────────────────────────── */
+    @media (max-width: 680px) {
+      .page  { padding: 40px 20px 80px; }
+      .mark-grid  { grid-template-columns: 1fr; gap: 28px; }
+      .wordmark   { font-size: 64px; }
+      .type-grid  { grid-template-columns: 1fr; }
+    }
+  </style>
+  <style id="color-vars">
+  /* source of truth: brand/colors.json — regenerated by: just gen-brand */
+  :root {
+    --emerald-400: oklch(76.5% 0.177 163.223);
+    --emerald-500: oklch(69.6% 0.17 162.48);
+    --emerald-600: oklch(59.6% 0.145 163.225);
+    --emerald-700: oklch(50.8% 0.118 165.612);
+    --violet-400: oklch(70.2% 0.183 293.541);
+    --slate-950: oklch(12.9% 0.042 264.695);
+    --slate-900: oklch(20.8% 0.042 265.755);
+    --slate-800: oklch(27.9% 0.041 260.031);
+    --slate-700: oklch(37.2% 0.044 257.287);
+    --slate-600: oklch(44.6% 0.043 257.281);
+    --slate-500: oklch(55.4% 0.046 257.417);
+    --slate-400: oklch(70.4% 0.04 256.788);
+    --slate-300: oklch(86.9% 0.022 252.894);
+    --slate-200: oklch(92.9% 0.013 255.508);
+    --slate-100: oklch(96.8% 0.007 247.896);
+    --amber-300: oklch(87.9% 0.169 91.605);
+    --red-400: oklch(70.4% 0.191 22.216);
+    --red-200: oklch(88.5% 0.062 18.334);
+    --icon-bg: oklch(18.0% 0.0325 266.625);
+  }
+  </style>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      document.fonts.ready.then(() => { document.body.style.opacity = '1'; });
+    });
+  </script>
+</head>
+<body style="opacity:0;transition:opacity 0.4s ease">
+<div class="page">
+
+  <header class="page-header">
+    <span class="page-title">txtshr — Brand</span>
+    <span class="page-subtitle">Internal reference</span>
+  </header>
+
+  <!-- Mark & Wordmark -->
+  <section>
+    <div class="section-label">Mark &amp; Wordmark</div>
+    <div class="mark-grid">
+      <div class="mark-icon-wrap">
+        <img src="../viewer/public/favicon.png" alt="txtshr app icon" class="mark-icon">
+      </div>
+      <div>
+        <div class="wordmark">txtshr</div>
+        <div class="wordmark-specs">
+          <div class="spec-row">
+            <span class="spec-key">Typeface</span>
+            <span class="spec-val">Bytesized</span>
+          </div>
+          <div class="spec-row">
+            <span class="spec-key">Color</span>
+            <span class="spec-val">emerald-400 &nbsp;·&nbsp; oklch(76.5% 0.177 163.223)</span>
+          </div>
+          <div class="spec-row">
+            <span class="spec-key">Rendering</span>
+            <span class="spec-val">-webkit-font-smoothing: none</span>
+          </div>
+          <div class="spec-row">
+            <span class="spec-key">Weight</span>
+            <span class="spec-val">700 (bold)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="svg-asset">
+      <div class="svg-asset-preview">
+        <img src="icon.svg" alt="txtshr SVG icon" style="height:96px;width:96px;">
+      </div>
+      <div class="svg-asset-footer">
+        <span class="svg-asset-name">icon.svg</span>
+        <span class="svg-asset-note">Resolved from icon.template.svg — regenerate with: just gen-icons</span>
+        <a href="icon.svg" download class="svg-download">↓ Download</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Typography -->
+  <section>
+    <div class="section-label">Typography</div>
+    <div class="type-grid">
+      <div class="type-card">
+        <div class="type-card-meta">
+          <div class="type-card-name">Bytesized</div>
+          <div class="type-card-role">Brand · logotype</div>
+        </div>
+        <div class="type-divider"></div>
+        <div class="type-sample">
+          <div class="sample-bytesized">txtshr</div>
+        </div>
+        <div class="type-spec">@fontsource/bytesized<br>no antialiasing</div>
+      </div>
+      <div class="type-card">
+        <div class="type-card-meta">
+          <div class="type-card-name">Funnel Display</div>
+          <div class="type-card-role">Headings · display text</div>
+        </div>
+        <div class="type-divider"></div>
+        <div class="type-sample">
+          <div class="sample-display">Zero Knowledge</div>
+        </div>
+        <div class="type-spec">Google Fonts<br>wght 300–800</div>
+      </div>
+      <div class="type-card">
+        <div class="type-card-meta">
+          <div class="type-card-name">Inter Variable</div>
+          <div class="type-card-role">Body · UI text</div>
+        </div>
+        <div class="type-divider"></div>
+        <div class="type-sample">
+          <div class="sample-sans">Encrypted in your browser. The server never sees your text or passphrase.</div>
+        </div>
+        <div class="type-spec">Google Fonts<br>opsz 14–32, wght 100–900</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Color Palette -->
+  <section>
+    <div class="section-label">Color Palette</div>
+    <div class="palette">
+        <div class="palette-group">
+          <div class="palette-group-name">Brand</div>
+          <div class="swatches">
+          <div class="swatch">
+            <div class="swatch-chip" style="background:var(--emerald-400)"></div>
+            <div class="swatch-info">
+              <div class="swatch-tw">emerald-400</div>
+              <div class="swatch-val">oklch(76.5% 0.177 163.223)</div>
+              <div class="swatch-use">Logo &amp; accent</div>
+            </div>
+          </div>
+          <div class="swatch">
+            <div class="swatch-chip" style="background:var(--emerald-500)"></div>
+            <div class="swatch-info">
+              <div class="swatch-tw">emerald-500</div>
+              <div class="swatch-val">oklch(69.6% 0.17 162.48)</div>
+              <div class="swatch-use">Button hover</div>
+            </div>
+          </div>
+          <div class="swatch">
+            <div class="swatch-chip" style="background:var(--emerald-600)"></div>
+            <div class="swatch-info">
+              <div class="swatch-tw">emerald-600</div>
+              <div class="swatch-val">oklch(59.6% 0.145 163.225)</div>
+              <div class="swatch-use">CTA button bg</div>
+            </div>
+          </div>
+          <div class="swatch">
+            <div class="swatch-chip" style="background:var(--emerald-700)"></div>
+            <div class="swatch-info">
+              <div class="swatch-tw">emerald-700</div>
+              <div class="swatch-val">oklch(50.8% 0.118 165.612)</div>
+              <div class="swatch-use">Button active</div>
+            </div>
+          </div>
+          </div>
+        </div>
+        <div class="palette-group">
+          <div class="palette-group-name">Highlight</div>
+          <div class="swatches">
+          <div class="swatch">
+            <div class="swatch-chip" style="background:var(--violet-400)"></div>
+            <div class="swatch-info">
+              <div class="swatch-tw">violet-400</div>
+              <div class="swatch-val">oklch(70.2% 0.183 293.541)</div>
+              <div class="swatch-use">Terminal output, URL links</div>
+            </div>
+          </div>
+          </div>
+        </div>
+        <div class="palette-group">
+          <div class="palette-group-name">Backgrounds</div>
+          <div class="swatches">
+          <div class="swatch">
+            <div class="swatch-chip" style="background:var(--slate-950)"></div>
+            <div class="swatch-info">
+              <div class="swatch-tw">slate-950</div>
+              <div class="swatch-val">oklch(12.9% 0.042 264.695)</div>
+              <div class="swatch-use">Page background</div>
+            </div>
+          </div>
+          <div class="swatch">
+            <div class="swatch-chip" style="background:var(--slate-900)"></div>
+            <div class="swatch-info">
+              <div class="swatch-tw">slate-900</div>
+              <div class="swatch-val">oklch(20.8% 0.042 265.755)</div>
+              <div class="swatch-use">Card surface</div>
+            </div>
+          </div>
+          <div class="swatch">
+            <div class="swatch-chip" style="background:var(--slate-800)"></div>
+            <div class="swatch-info">
+              <div class="swatch-tw">slate-800</div>
+              <div class="swatch-val">oklch(27.9% 0.041 260.031)</div>
+              <div class="swatch-use">Input bg, borders</div>
+            </div>
+          </div>
+          </div>
+        </div>
+        <div class="palette-group">
+          <div class="palette-group-name">Borders &amp; Dividers</div>
+          <div class="swatches">
+          <div class="swatch">
+            <div class="swatch-chip" style="background:var(--slate-700)"></div>
+            <div class="swatch-info">
+              <div class="swatch-tw">slate-700</div>
+              <div class="swatch-val">oklch(37.2% 0.044 257.287)</div>
+              <div class="swatch-use">Borders, HR</div>
+            </div>
+          </div>
+          <div class="swatch">
+            <div class="swatch-chip" style="background:var(--slate-600)"></div>
+            <div class="swatch-info">
+              <div class="swatch-tw">slate-600</div>
+              <div class="swatch-val">oklch(44.6% 0.043 257.281)</div>
+              <div class="swatch-use">Subtle separators</div>
+            </div>
+          </div>
+          </div>
+        </div>
+        <div class="palette-group">
+          <div class="palette-group-name">Text</div>
+          <div class="swatches">
+          <div class="swatch">
+            <div class="swatch-chip" style="background:var(--slate-100)"></div>
+            <div class="swatch-info">
+              <div class="swatch-tw">slate-100</div>
+              <div class="swatch-val">oklch(96.8% 0.007 247.896)</div>
+              <div class="swatch-use">Primary text</div>
+            </div>
+          </div>
+          <div class="swatch">
+            <div class="swatch-chip" style="background:var(--slate-200)"></div>
+            <div class="swatch-info">
+              <div class="swatch-tw">slate-200</div>
+              <div class="swatch-val">oklch(92.9% 0.013 255.508)</div>
+              <div class="swatch-use">Pre/code content</div>
+            </div>
+          </div>
+          <div class="swatch">
+            <div class="swatch-chip" style="background:var(--slate-300)"></div>
+            <div class="swatch-info">
+              <div class="swatch-tw">slate-300</div>
+              <div class="swatch-val">oklch(86.9% 0.022 252.894)</div>
+              <div class="swatch-use">Body copy</div>
+            </div>
+          </div>
+          <div class="swatch">
+            <div class="swatch-chip" style="background:var(--slate-400)"></div>
+            <div class="swatch-info">
+              <div class="swatch-tw">slate-400</div>
+              <div class="swatch-val">oklch(70.4% 0.04 256.788)</div>
+              <div class="swatch-use">Secondary, icons</div>
+            </div>
+          </div>
+          <div class="swatch">
+            <div class="swatch-chip" style="background:var(--slate-500)"></div>
+            <div class="swatch-info">
+              <div class="swatch-tw">slate-500</div>
+              <div class="swatch-val">oklch(55.4% 0.046 257.417)</div>
+              <div class="swatch-use">Placeholder, muted</div>
+            </div>
+          </div>
+          </div>
+        </div>
+        <div class="palette-group">
+          <div class="palette-group-name">Status</div>
+          <div class="swatches">
+          <div class="swatch">
+            <div class="swatch-chip" style="background:var(--amber-300)"></div>
+            <div class="swatch-info">
+              <div class="swatch-tw">amber-300</div>
+              <div class="swatch-val">oklch(87.9% 0.169 91.605)</div>
+              <div class="swatch-use">Warning text</div>
+            </div>
+          </div>
+          <div class="swatch">
+            <div class="swatch-chip" style="background:var(--red-400)"></div>
+            <div class="swatch-info">
+              <div class="swatch-tw">red-400</div>
+              <div class="swatch-val">oklch(70.4% 0.191 22.216)</div>
+              <div class="swatch-use">Error text</div>
+            </div>
+          </div>
+          <div class="swatch">
+            <div class="swatch-chip" style="background:var(--red-200)"></div>
+            <div class="swatch-info">
+              <div class="swatch-tw">red-200</div>
+              <div class="swatch-val">oklch(88.5% 0.062 18.334)</div>
+              <div class="swatch-use">Error body text</div>
+            </div>
+          </div>
+          </div>
+        </div>
+    </div>
+  </section>
+
+  <!-- UI Conventions -->
+  <section>
+    <div class="section-label">UI Conventions</div>
+    <div class="convention-grid">
+
+      <div class="convention-card">
+        <div class="convention-title">Status opacity scale</div>
+        <p class="convention-desc">
+          Tinted backgrounds and borders use a <strong>golden ratio</strong> relationship:
+          border opacity = background opacity × φ (≈ 1.618).
+          This applies to all error, warning, and alert surfaces.
+        </p>
+        <div class="convention-examples">
+          <div class="convention-row">
+            <span class="convention-label">Inline alerts</span>
+            <span class="convention-chip" style="background:var(--red-400) / 10%; border:1px solid color-mix(in oklch, var(--red-400) 16%, transparent)">bg / 10%</span>
+            <span class="convention-sep">→ border</span>
+            <span class="convention-chip" style="background:transparent; border:1px solid color-mix(in oklch, var(--red-400) 16%, transparent); color:var(--red-400)">16% (10 × φ)</span>
+          </div>
+          <div class="convention-row">
+            <span class="convention-label">Floating toast</span>
+            <span class="convention-chip" style="background:var(--red-400) / 30%; border:1px solid color-mix(in oklch, var(--red-400) 49%, transparent)">bg / 30%</span>
+            <span class="convention-sep">→ border</span>
+            <span class="convention-chip" style="background:transparent; border:1px solid color-mix(in oklch, var(--red-400) 49%, transparent); color:var(--red-400)">49% (30 × φ)</span>
+          </div>
+        </div>
+        <div class="convention-live">
+          <div style="background:color-mix(in oklch,var(--red-400) 10%,transparent);border:1px solid color-mix(in oklch,var(--red-400) 16%,transparent);border-radius:8px;padding:8px 14px;font-size:12px;color:var(--red-400)">
+            Inline error — bg/10, border/16
+          </div>
+          <div style="background:color-mix(in oklch,var(--amber-300) 10%,transparent);border:1px solid color-mix(in oklch,var(--amber-300) 16%,transparent);border-radius:8px;padding:8px 14px;font-size:12px;color:var(--amber-300)">
+            Inline warning — bg/10, border/16
+          </div>
+          <div style="background:color-mix(in oklch,var(--red-400) 30%,transparent);border:1px solid color-mix(in oklch,var(--red-400) 49%,transparent);border-radius:10px;padding:8px 14px;font-size:12px;color:var(--red-200)">
+            Toast — bg/30, border/49
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Generated Assets -->
+  <section>
+    <div class="section-label">Generated Assets</div>
+
+    
+        <div class="asset-subgroup">
+          <div class="asset-subgroup-label">Web</div>
+          
+      <div class="icon-grid">
+        
+          <div class="icon-chip">
+            <div class="icon-chip-preview">
+              <img src="../viewer/public/favicon.png" alt="favicon.png" class="icon-chip-img">
+            </div>
+            <div class="icon-chip-info">
+              <div class="icon-chip-name">favicon.png</div>
+              <div class="icon-chip-meta">640 × 640</div>
+              <div class="icon-chip-usage">Browser tab · PWA</div>
+            </div>
+          </div>
+      </div>
+        </div>
+
+    
+        <div class="asset-subgroup">
+          <div class="asset-subgroup-label">iOS — App Icons</div>
+          
+      <div class="icon-grid">
+        
+          <div class="icon-chip">
+            <div class="icon-chip-preview">
+              <img src="../mobile/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-20x20@1x.png" alt="Icon-App-20x20@1x.png" class="icon-chip-img">
+            </div>
+            <div class="icon-chip-info">
+              <div class="icon-chip-name">Icon-App-20x20@1x.png</div>
+              <div class="icon-chip-meta">20 × 20 px</div>
+              <div class="icon-chip-usage">Notification 1×</div>
+            </div>
+          </div>
+          <div class="icon-chip">
+            <div class="icon-chip-preview">
+              <img src="../mobile/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-20x20@2x.png" alt="Icon-App-20x20@2x.png" class="icon-chip-img">
+            </div>
+            <div class="icon-chip-info">
+              <div class="icon-chip-name">Icon-App-20x20@2x.png</div>
+              <div class="icon-chip-meta">40 × 40 px</div>
+              <div class="icon-chip-usage">Notification 2×</div>
+            </div>
+          </div>
+          <div class="icon-chip">
+            <div class="icon-chip-preview">
+              <img src="../mobile/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-20x20@3x.png" alt="Icon-App-20x20@3x.png" class="icon-chip-img">
+            </div>
+            <div class="icon-chip-info">
+              <div class="icon-chip-name">Icon-App-20x20@3x.png</div>
+              <div class="icon-chip-meta">60 × 60 px</div>
+              <div class="icon-chip-usage">Notification 3×</div>
+            </div>
+          </div>
+          <div class="icon-chip">
+            <div class="icon-chip-preview">
+              <img src="../mobile/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-29x29@1x.png" alt="Icon-App-29x29@1x.png" class="icon-chip-img">
+            </div>
+            <div class="icon-chip-info">
+              <div class="icon-chip-name">Icon-App-29x29@1x.png</div>
+              <div class="icon-chip-meta">29 × 29 px</div>
+              <div class="icon-chip-usage">Settings 1×</div>
+            </div>
+          </div>
+          <div class="icon-chip">
+            <div class="icon-chip-preview">
+              <img src="../mobile/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-29x29@2x.png" alt="Icon-App-29x29@2x.png" class="icon-chip-img">
+            </div>
+            <div class="icon-chip-info">
+              <div class="icon-chip-name">Icon-App-29x29@2x.png</div>
+              <div class="icon-chip-meta">58 × 58 px</div>
+              <div class="icon-chip-usage">Settings 2×</div>
+            </div>
+          </div>
+          <div class="icon-chip">
+            <div class="icon-chip-preview">
+              <img src="../mobile/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-29x29@3x.png" alt="Icon-App-29x29@3x.png" class="icon-chip-img">
+            </div>
+            <div class="icon-chip-info">
+              <div class="icon-chip-name">Icon-App-29x29@3x.png</div>
+              <div class="icon-chip-meta">87 × 87 px</div>
+              <div class="icon-chip-usage">Settings 3×</div>
+            </div>
+          </div>
+          <div class="icon-chip">
+            <div class="icon-chip-preview">
+              <img src="../mobile/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-40x40@1x.png" alt="Icon-App-40x40@1x.png" class="icon-chip-img">
+            </div>
+            <div class="icon-chip-info">
+              <div class="icon-chip-name">Icon-App-40x40@1x.png</div>
+              <div class="icon-chip-meta">40 × 40 px</div>
+              <div class="icon-chip-usage">Spotlight 1×</div>
+            </div>
+          </div>
+          <div class="icon-chip">
+            <div class="icon-chip-preview">
+              <img src="../mobile/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-40x40@2x.png" alt="Icon-App-40x40@2x.png" class="icon-chip-img">
+            </div>
+            <div class="icon-chip-info">
+              <div class="icon-chip-name">Icon-App-40x40@2x.png</div>
+              <div class="icon-chip-meta">80 × 80 px</div>
+              <div class="icon-chip-usage">Spotlight 2×</div>
+            </div>
+          </div>
+          <div class="icon-chip">
+            <div class="icon-chip-preview">
+              <img src="../mobile/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-40x40@3x.png" alt="Icon-App-40x40@3x.png" class="icon-chip-img">
+            </div>
+            <div class="icon-chip-info">
+              <div class="icon-chip-name">Icon-App-40x40@3x.png</div>
+              <div class="icon-chip-meta">120 × 120 px</div>
+              <div class="icon-chip-usage">Spotlight 3×</div>
+            </div>
+          </div>
+          <div class="icon-chip">
+            <div class="icon-chip-preview">
+              <img src="../mobile/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-60x60@2x.png" alt="Icon-App-60x60@2x.png" class="icon-chip-img">
+            </div>
+            <div class="icon-chip-info">
+              <div class="icon-chip-name">Icon-App-60x60@2x.png</div>
+              <div class="icon-chip-meta">120 × 120 px</div>
+              <div class="icon-chip-usage">iPhone App 2×</div>
+            </div>
+          </div>
+          <div class="icon-chip">
+            <div class="icon-chip-preview">
+              <img src="../mobile/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-60x60@3x.png" alt="Icon-App-60x60@3x.png" class="icon-chip-img">
+            </div>
+            <div class="icon-chip-info">
+              <div class="icon-chip-name">Icon-App-60x60@3x.png</div>
+              <div class="icon-chip-meta">180 × 180 px</div>
+              <div class="icon-chip-usage">iPhone App 3×</div>
+            </div>
+          </div>
+          <div class="icon-chip">
+            <div class="icon-chip-preview">
+              <img src="../mobile/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-76x76@1x.png" alt="Icon-App-76x76@1x.png" class="icon-chip-img">
+            </div>
+            <div class="icon-chip-info">
+              <div class="icon-chip-name">Icon-App-76x76@1x.png</div>
+              <div class="icon-chip-meta">76 × 76 px</div>
+              <div class="icon-chip-usage">iPad App 1×</div>
+            </div>
+          </div>
+          <div class="icon-chip">
+            <div class="icon-chip-preview">
+              <img src="../mobile/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-76x76@2x.png" alt="Icon-App-76x76@2x.png" class="icon-chip-img">
+            </div>
+            <div class="icon-chip-info">
+              <div class="icon-chip-name">Icon-App-76x76@2x.png</div>
+              <div class="icon-chip-meta">152 × 152 px</div>
+              <div class="icon-chip-usage">iPad App 2×</div>
+            </div>
+          </div>
+          <div class="icon-chip">
+            <div class="icon-chip-preview">
+              <img src="../mobile/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-83.5x83.5@2x.png" alt="Icon-App-83.5x83.5@2x.png" class="icon-chip-img">
+            </div>
+            <div class="icon-chip-info">
+              <div class="icon-chip-name">Icon-App-83.5x83.5@2x.png</div>
+              <div class="icon-chip-meta">167 × 167 px</div>
+              <div class="icon-chip-usage">iPad Pro 2×</div>
+            </div>
+          </div>
+          <div class="icon-chip">
+            <div class="icon-chip-preview">
+              <img src="../mobile/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-1024x1024@1x.png" alt="Icon-App-1024x1024@1x.png" class="icon-chip-img">
+            </div>
+            <div class="icon-chip-info">
+              <div class="icon-chip-name">Icon-App-1024x1024@1x.png</div>
+              <div class="icon-chip-meta">1024 × 1024 px</div>
+              <div class="icon-chip-usage">App Store</div>
+            </div>
+          </div>
+      </div>
+        </div>
+
+    
+        <div class="asset-subgroup">
+          <div class="asset-subgroup-label">iOS — Launch Screens</div>
+          
+      <div class="splash-row">
+        
+          <div class="splash-thumb">
+            <div class="splash-thumb-preview">
+              <img src="../mobile/ios/Runner/Assets.xcassets/LaunchImage.imageset/LaunchImage.png" alt="LaunchImage.png">
+            </div>
+            <div class="splash-thumb-info">
+              <div class="icon-chip-name">LaunchImage.png</div>
+              <div class="icon-chip-meta">375 × 667 · 1×</div>
+            </div>
+          </div>
+          <div class="splash-thumb">
+            <div class="splash-thumb-preview">
+              <img src="../mobile/ios/Runner/Assets.xcassets/LaunchImage.imageset/LaunchImage@2x.png" alt="LaunchImage@2x.png">
+            </div>
+            <div class="splash-thumb-info">
+              <div class="icon-chip-name">LaunchImage@2x.png</div>
+              <div class="icon-chip-meta">750 × 1334 · 2×</div>
+            </div>
+          </div>
+          <div class="splash-thumb">
+            <div class="splash-thumb-preview">
+              <img src="../mobile/ios/Runner/Assets.xcassets/LaunchImage.imageset/LaunchImage@3x.png" alt="LaunchImage@3x.png">
+            </div>
+            <div class="splash-thumb-info">
+              <div class="icon-chip-name">LaunchImage@3x.png</div>
+              <div class="icon-chip-meta">1242 × 2208 · 3×</div>
+            </div>
+          </div>
+      </div>
+        </div>
+
+    
+        <div class="asset-subgroup">
+          <div class="asset-subgroup-label">Android — Launcher Icons</div>
+          
+      <div class="icon-grid">
+        
+          <div class="icon-chip">
+            <div class="icon-chip-preview">
+              <img src="../mobile/android/app/src/main/res/mipmap-mdpi/ic_launcher.png" alt="mipmap-mdpi/ic_launcher.png" class="icon-chip-img">
+            </div>
+            <div class="icon-chip-info">
+              <div class="icon-chip-name">mipmap-mdpi/ic_launcher.png</div>
+              <div class="icon-chip-meta">48 × 48 px</div>
+              <div class="icon-chip-usage">mdpi</div>
+            </div>
+          </div>
+          <div class="icon-chip">
+            <div class="icon-chip-preview">
+              <img src="../mobile/android/app/src/main/res/mipmap-hdpi/ic_launcher.png" alt="mipmap-hdpi/ic_launcher.png" class="icon-chip-img">
+            </div>
+            <div class="icon-chip-info">
+              <div class="icon-chip-name">mipmap-hdpi/ic_launcher.png</div>
+              <div class="icon-chip-meta">72 × 72 px</div>
+              <div class="icon-chip-usage">hdpi</div>
+            </div>
+          </div>
+          <div class="icon-chip">
+            <div class="icon-chip-preview">
+              <img src="../mobile/android/app/src/main/res/mipmap-xhdpi/ic_launcher.png" alt="mipmap-xhdpi/ic_launcher.png" class="icon-chip-img">
+            </div>
+            <div class="icon-chip-info">
+              <div class="icon-chip-name">mipmap-xhdpi/ic_launcher.png</div>
+              <div class="icon-chip-meta">96 × 96 px</div>
+              <div class="icon-chip-usage">xhdpi</div>
+            </div>
+          </div>
+          <div class="icon-chip">
+            <div class="icon-chip-preview">
+              <img src="../mobile/android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png" alt="mipmap-xxhdpi/ic_launcher.png" class="icon-chip-img">
+            </div>
+            <div class="icon-chip-info">
+              <div class="icon-chip-name">mipmap-xxhdpi/ic_launcher.png</div>
+              <div class="icon-chip-meta">144 × 144 px</div>
+              <div class="icon-chip-usage">xxhdpi</div>
+            </div>
+          </div>
+          <div class="icon-chip">
+            <div class="icon-chip-preview">
+              <img src="../mobile/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png" alt="mipmap-xxxhdpi/ic_launcher.png" class="icon-chip-img">
+            </div>
+            <div class="icon-chip-info">
+              <div class="icon-chip-name">mipmap-xxxhdpi/ic_launcher.png</div>
+              <div class="icon-chip-meta">192 × 192 px</div>
+              <div class="icon-chip-usage">xxxhdpi</div>
+            </div>
+          </div>
+      </div>
+        </div>
+
+    
+        <div class="asset-subgroup">
+          <div class="asset-subgroup-label">Store Listings</div>
+          
+      <div class="svg-asset">
+        <div class="svg-asset-preview" style="justify-content:center;">
+          <img src="../mobile/screenshots/feature-graphic.png" alt="feature-graphic.png" class="wide-asset-img" style="max-height:220px;width:auto;">
+        </div>
+        <div class="svg-asset-footer">
+          <span class="svg-asset-name">feature-graphic.png</span>
+          <span class="svg-asset-note">Play Store &amp; App Store · 1024 × 500</span>
+          <a href="../mobile/screenshots/feature-graphic.png" download class="svg-download">↓ Download</a>
+        </div>
+      </div>
+        </div>
+
+  </section>
+
+</div>
+<script>
+  document.querySelectorAll('.icon-chip-preview img, .splash-thumb-preview img, .svg-asset-preview img, .mark-icon').forEach(img => {
+    img.addEventListener('click', () => {
+      const d = document.createElement('dialog');
+      d.className = 'lightbox';
+      d.innerHTML = `<img src="${img.src}">`;
+      d.addEventListener('click', () => d.close());
+      document.body.appendChild(d);
+      d.showModal();
+      d.addEventListener('close', () => d.remove(), { once: true });
+    });
+  });
+</script>
+</body>
+</html>

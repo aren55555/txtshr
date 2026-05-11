@@ -261,17 +261,17 @@ const App = () => {
 
           <Match when={appState() === "warn"}>
             <div class="space-y-4">
-              <div class="bg-amber-900/30 border border-amber-700/50 rounded-lg px-4 py-3 space-y-2">
-                <p class="text-sm font-semibold text-amber-300">Third-party renderer</p>
-                <p class="text-sm text-amber-200/80 leading-relaxed">
+              <div class="bg-amber-300/10 border border-amber-300/[16] rounded-lg px-4 py-3 space-y-2">
+                <h3 class="text-sm font-semibold text-amber-300">Third-party renderer</h3>
+                <p class="text-sm text-amber-300/80 leading-relaxed">
                   This link uses a renderer from{" "}
-                  <code class="font-mono text-amber-100 bg-amber-900/50 px-1 rounded text-xs">
+                  <code class="font-mono text-amber-300 bg-amber-300/10 px-1 rounded text-xs">
                     {formatRendererSpec(rendererSpec!)}
                   </code>
                   . The renderer will receive access to the decrypted content. Only proceed if you trust this source.
                 </p>
                 <Show when={refs.rendererHashChanged}>
-                  <p class="text-xs text-amber-400">Renderer code has changed since your last visit.</p>
+                  <p class="text-xs text-amber-300">Renderer code has changed since your last visit.</p>
                 </Show>
               </div>
               <Show when={trustRecord()}>
@@ -307,7 +307,7 @@ const App = () => {
                 />
               </div>
               <Show when={appState() === "error"}>
-                <p role="alert" class="text-sm text-red-400 bg-red-950/40 border border-red-900/50 rounded-lg px-4 py-2.5">
+                <p role="alert" class="text-sm text-red-400 bg-red-400/10 border border-red-400/[16] rounded-lg px-4 py-2.5">
                   {errorMsg()}
                 </p>
               </Show>
@@ -344,7 +344,7 @@ const App = () => {
 
           <Match when={appState() === "renderer-error"}>
             <div class="space-y-4">
-              <p role="alert" class="text-sm text-amber-400 bg-amber-950/40 border border-amber-900/50 rounded-lg px-4 py-2.5">
+              <p role="alert" class="text-sm text-amber-300 bg-amber-300/10 border border-amber-300/[16] rounded-lg px-4 py-2.5">
                 Renderer failed to load — showing plain text.
               </p>
               <pre class="bg-slate-950 border border-slate-800 rounded-lg p-4 text-sm text-slate-200 overflow-auto max-h-96 whitespace-pre-wrap break-words font-mono leading-relaxed">{decryptedText()}</pre>

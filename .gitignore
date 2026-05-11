@@ -4,6 +4,7 @@ cli/txtshr
 # Node
 viewer/node_modules/
 renderer-types/node_modules/
+brand/scripts/node_modules/
 viewer/dist/
 
 # GoReleaser

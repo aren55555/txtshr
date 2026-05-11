@@ -100,6 +100,18 @@ The [`txtshr-renderer`](https://www.npmjs.com/package/txtshr-renderer) npm packa
 
 Publish your repo with the built file at `dist/<name>.js` and reference it in a txtshr URL as `owner/repo/name` (optionally pinned to a tag with `@version`). The viewer fetches the module from [jsDelivr](https://www.jsdelivr.com/) at `cdn.jsdelivr.net/gh/owner/repo@version/dist/name.js`.
 
+## Development
+
+### Brand assets
+
+All brand outputs (icons, splash screens, feature graphic, brand reference page) are generated from source and are fully reproducible — `git diff` is clean after a rebuild on any machine.
+
+```bash
+just brand::rebuild   # regenerate all brand assets
+```
+
+Outputs are rasterised from SVG using [`@resvg/resvg-js`](https://github.com/yisibl/resvg-js). Fonts are embedded as base64 and pinned via `brand/scripts/bun.lock`, so no manual font installation is required.
+
 ## Self-hosting the viewer
 
 The viewer at [txtshr.run](https://txtshr.run) is available for anyone to use. If you'd prefer to host it yourself:

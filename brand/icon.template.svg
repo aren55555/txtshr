@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="txtshr icon">
+  <title>txtshr</title>
+
+  <rect width="512" height="512" fill="{{icon-bg}}"/>
+
+  <!-- Scale shield + lock up by 1.25× from canvas centre -->
+  <g transform="translate(256,256) scale(1.25) translate(-256,-256)">
+
+    <!-- Outer shield -->
+    <path d="M256,115 L367,165 L367,268 Q367,356 256,388 Q145,356 145,268 L145,165 Z"
+          fill="none" stroke="{{emerald-600}}" stroke-width="9" stroke-linejoin="round"/>
+
+    <!-- Inner shield: 18px perpendicular inset of the outer path -->
+    <path d="M256,135 L349,177 L349,268 Q349,341 256,370 Q163,341 163,268 L163,177 Z"
+          fill="none" stroke="{{emerald-400}}" stroke-width="7" stroke-linejoin="round"/>
+
+    <!-- Shackle: straight arms + circular arc -->
+    <path d="M224,243 L224,208 A32,32 0 0,1 288,208 L288,243"
+          fill="none" stroke="{{emerald-500}}" stroke-width="14" stroke-linecap="butt"/>
+
+    <!-- Lock body -->
+    <rect x="206" y="226" width="100" height="88" rx="8" fill="{{emerald-500}}"/>
+
+    <!-- Keyhole -->
+    <circle cx="256" cy="258" r="12" fill="{{icon-bg}}"/>
+    <rect   x="250"  y="264" width="12" height="19" rx="4" fill="{{icon-bg}}"/>
+
+  </g>
+</svg>

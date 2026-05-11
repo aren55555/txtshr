@@ -3,7 +3,10 @@
     "allow": [
       "Bash(mise ls *)",
       "Bash(mise ls-remote *)",
-      "Bash(mise plugin *)"
+      "Bash(mise plugin *)",
+      "Bash(cat)",
+      "Bash(bash /tmp/check_colors.sh)",
+      "Bash(bun *)"
     ]
   }
 }

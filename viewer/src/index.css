@@ -1,6 +1,7 @@
 @import "@fontsource/bytesized";
 @import "@fontsource-variable/inter";
 @import "@fontsource/funnel-display";
+@import "@fontsource/funnel-display/800.css";
 @import "tailwindcss";
 
 @theme {

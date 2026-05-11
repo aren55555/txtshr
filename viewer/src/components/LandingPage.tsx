@@ -36,15 +36,16 @@ const LandingPage = () => {
 
           <div class="space-y-4">
             <div>
-              <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Install</p>
+              <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Install</h3>
               <TabbedSelector tabs={[
                 { title: "Mobile", content: (
-                  <div class="bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 flex flex-col items-center gap-1.5">
-                    <div class="flex items-center justify-center gap-3 opacity-40">
-                      <img src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg" alt="Download on the App Store" class="h-10 pointer-events-none" />
-                      <img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get it on Google Play" class="h-[60px] pointer-events-none" />
-                    </div>
-                    <p class="text-xs text-slate-500 tracking-widest uppercase">Apps Coming Soon</p>
+                  <div class="bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 overflow-hidden">
+                    <a href="https://apps.apple.com/us/app/txtshr/id6767940916" target="_blank" rel="noopener noreferrer">
+                      <img src="/app-store-badge.svg" alt="Download on the App Store" class="h-10 w-auto" />
+                    </a>
+                    <a href="https://play.google.com/store/apps/details?id=run.txtshr.txtshr" target="_blank" rel="noopener noreferrer">
+                      <img src="/google-play-badge.svg" alt="Get it on Google Play" class="h-10 w-auto" />
+                    </a>
                   </div>
                 )},
                 { title: "Mac (brew)", content: <TerminalBlock command="brew install aren55555/tap/txtshr" /> },
@@ -52,7 +53,7 @@ const LandingPage = () => {
               ]} />
             </div>
             <div>
-              <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Usage</p>
+              <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Usage</h3>
               <TabbedSelector tabs={[
                 { title: "Share Text", content: <TerminalBlock command='echo "secret message" | txtshr -password demo' highlightBrand output={[<a href={url("#c=66lCuX9ITDy4_3pt55cETSJoonKY6ZRt5cpV4fkV6A&n=vYbEaAamnXzfg4JN&s=3CdNmFsFwcuhpHDjuIEQjg&v=1")} target="_blank" rel="noopener noreferrer" class="underline hover:text-violet-300">{url("#c=66lCuX9ITDy4_3pt55cETSJoonKY6ZRt5cpV4fkV6A&n=vYbEaAamnXzfg4JN&s=3CdNmFsFwcuhpHDjuIEQjg&v=1")}</a>]} /> },
                 { title: "Share a File", content: <TerminalBlock command="cat notes.txt | txtshr -password demo" highlightBrand output={[<a href={url("#c=J8tvGjFMz0lBbwz0o4pbqZMFHU6rcSmv-Rq2ETygyUAE0Ms&n=RJXc2D1a8S4YlY4V&s=SY2UMBCqxhcYNqyYSUJ_eQ&v=1")} target="_blank" rel="noopener noreferrer" class="underline hover:text-violet-300">{url("#c=J8tvGjFMz0lBbwz0o4pbqZMFHU6rcSmv-Rq2ETygyUAE0Ms&n=RJXc2D1a8S4YlY4V&s=SY2UMBCqxhcYNqyYSUJ_eQ&v=1")}</a>]} /> },

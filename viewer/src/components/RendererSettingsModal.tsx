@@ -25,7 +25,7 @@ const RendererSettingsModal = (props: {
   return (
     <Portal>
       <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={props.onClose} />
+        <div class="absolute inset-0 bg-slate-950/60 backdrop-blur-sm" onClick={props.onClose} />
         <div class="relative w-full max-w-xl bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl shadow-black/50 p-6 space-y-4">
           <div class="flex items-center justify-between">
             <h2 class="text-base font-semibold text-slate-100">Trusted Renderers</h2>
@@ -73,7 +73,7 @@ const RendererSettingsModal = (props: {
                           </Show>
                           <button
                             onClick={() => handleForget(r.spec)}
-                            class="flex items-center gap-1 text-xs text-red-400 hover:text-red-300 border border-red-800/60 hover:border-red-600 rounded px-2 py-1 transition focus:outline-none"
+                            class="flex items-center gap-1 text-xs text-red-400 hover:text-red-400 border border-red-400/30 hover:border-red-400/60 rounded px-2 py-1 transition focus:outline-none"
                           >
                             <svg class="w-3 h-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                               <path fill-rule="evenodd" d="M8.75 1A2.75 2.75 0 0 0 6 3.75v.443c-.795.077-1.584.176-2.365.298a.75.75 0 1 0 .23 1.482l.149-.022.841 10.518A2.75 2.75 0 0 0 7.596 19h4.807a2.75 2.75 0 0 0 2.742-2.53l.841-10.52.149.023a.75.75 0 0 0 .23-1.482A41.03 41.03 0 0 0 14 4.193V3.75A2.75 2.75 0 0 0 11.25 1h-2.5ZM10 4c.84 0 1.673.025 2.5.075V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.325C8.327 4.025 9.16 4 10 4ZM8.58 7.72a.75.75 0 0 0-1.5.06l.3 7.5a.75.75 0 1 0 1.5-.06l-.3-7.5Zm4.34.06a.75.75 0 1 0-1.5-.06l-.3 7.5a.75.75 0 1 0 1.5.06l.3-7.5Z" clip-rule="evenodd" />
@@ -90,12 +90,12 @@ const RendererSettingsModal = (props: {
           </Show>
           <hr class="border-slate-700" />
           <div class="space-y-2">
-            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Building a renderer</p>
+            <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Building a renderer</h3>
             <p class="text-xs text-slate-500 leading-relaxed">
               A renderer is an ES module hosted on GitHub that exports a{" "}
               <code class="font-mono text-slate-400 bg-slate-800 px-1 rounded">render(el, text)</code>{" "}
               function. The{" "}
-              <a href="https://www.npmjs.com/package/txtshr-renderer" target="_blank" rel="noopener noreferrer" class="text-emerald-400 hover:text-emerald-300 transition">txtshr-renderer</a>{" "}
+              <a href="https://www.npmjs.com/package/txtshr-renderer" target="_blank" rel="noopener noreferrer" class="text-emerald-400 hover:text-emerald-600 transition">txtshr-renderer</a>{" "}
               npm package provides TypeScript types.{" "}
               <br />
               <br />

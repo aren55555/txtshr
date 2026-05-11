@@ -65,7 +65,7 @@ export interface LoadedRenderer {
  * does not export a `render` function, or hashing is unavailable.
  */
 export const loadRenderer = async (url: string): Promise<LoadedRenderer> => {
-  const response = await fetch(url);
+  const response = await fetch(url, { signal: AbortSignal.timeout(8000) });
   if (!response.ok) {
     throw new Error(`Failed to fetch renderer (${response.status}): ${url}`);
   }

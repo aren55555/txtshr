@@ -1,0 +1,106 @@
+{
+  "colors": {
+    "emerald-400": "oklch(76.5% 0.177 163.223)",
+    "emerald-500": "oklch(69.6% 0.17 162.48)",
+    "emerald-600": "oklch(59.6% 0.145 163.225)",
+    "emerald-700": "oklch(50.8% 0.118 165.612)",
+    "violet-400":  "oklch(70.2% 0.183 293.541)",
+    "slate-950":   "oklch(12.9% 0.042 264.695)",
+    "slate-900":   "oklch(20.8% 0.042 265.755)",
+    "slate-800":   "oklch(27.9% 0.041 260.031)",
+    "slate-700":   "oklch(37.2% 0.044 257.287)",
+    "slate-600":   "oklch(44.6% 0.043 257.281)",
+    "slate-500":   "oklch(55.4% 0.046 257.417)",
+    "slate-400":   "oklch(70.4% 0.04 256.788)",
+    "slate-300":   "oklch(86.9% 0.022 252.894)",
+    "slate-200":   "oklch(92.9% 0.013 255.508)",
+    "slate-100":   "oklch(96.8% 0.007 247.896)",
+    "amber-300":   "oklch(87.9% 0.169 91.605)",
+    "red-400":     "oklch(70.4% 0.191 22.216)",
+    "red-200":     "oklch(88.5% 0.062 18.334)",
+    "icon-bg":     "oklch(18.0% 0.0325 266.625)"
+  },
+  "wordmark": {
+    "text": "txtshr",
+    "typeface": "Bytesized",
+    "colorToken": "emerald-400",
+    "rendering": "-webkit-font-smoothing: none",
+    "weight": "700 (bold)"
+  },
+  "typography": [
+    {
+      "name": "Bytesized",
+      "role": "Brand · logotype",
+      "source": "@fontsource/bytesized",
+      "note": "no antialiasing",
+      "sample": "txtshr",
+      "sampleClass": "sample-bytesized"
+    },
+    {
+      "name": "Funnel Display",
+      "role": "Headings · display text",
+      "source": "Google Fonts",
+      "note": "wght 300–800",
+      "sample": "Zero Knowledge",
+      "sampleClass": "sample-display"
+    },
+    {
+      "name": "Inter Variable",
+      "role": "Body · UI text",
+      "source": "Google Fonts",
+      "note": "opsz 14–32, wght 100–900",
+      "sample": "Encrypted in your browser. The server never sees your text or passphrase.",
+      "sampleClass": "sample-sans"
+    }
+  ],
+  "colorGroups": [
+    {
+      "name": "Brand",
+      "colors": [
+        { "token": "emerald-400", "usage": "Logo &amp; accent" },
+        { "token": "emerald-500", "usage": "Button hover" },
+        { "token": "emerald-600", "usage": "CTA button bg" },
+        { "token": "emerald-700", "usage": "Button active" }
+      ]
+    },
+    {
+      "name": "Highlight",
+      "colors": [
+        { "token": "violet-400", "usage": "Terminal output, URL links" }
+      ]
+    },
+    {
+      "name": "Backgrounds",
+      "colors": [
+        { "token": "slate-950", "usage": "Page background" },
+        { "token": "slate-900", "usage": "Card surface" },
+        { "token": "slate-800", "usage": "Input bg, borders" }
+      ]
+    },
+    {
+      "name": "Borders &amp; Dividers",
+      "colors": [
+        { "token": "slate-700", "usage": "Borders, HR" },
+        { "token": "slate-600", "usage": "Subtle separators" }
+      ]
+    },
+    {
+      "name": "Text",
+      "colors": [
+        { "token": "slate-100", "usage": "Primary text" },
+        { "token": "slate-200", "usage": "Pre/code content" },
+        { "token": "slate-300", "usage": "Body copy" },
+        { "token": "slate-400", "usage": "Secondary, icons" },
+        { "token": "slate-500", "usage": "Placeholder, muted" }
+      ]
+    },
+    {
+      "name": "Status",
+      "colors": [
+        { "token": "amber-300", "usage": "Warning text" },
+        { "token": "red-400",   "usage": "Error text" },
+        { "token": "red-200",   "usage": "Error body text" }
+      ]
+    }
+  ]
+}

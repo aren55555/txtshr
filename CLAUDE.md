@@ -32,6 +32,29 @@ bun install
 bun run build   # tsc → dist/
 ```
 
+### Brand assets (`brand/`)
+All brand outputs are generated from source and are fully reproducible — `git diff` is clean after a rebuild on any machine.
+
+```bash
+just brand::rebuild   # regenerate everything (see below)
+just brand::preview   # open brand/index.html in the browser
+```
+
+`rebuild` produces, in order:
+| Output | Script |
+|---|---|
+| `brand/index.html` | `gen-brand.ts` — brand reference page from `brand.json` |
+| `brand/icon.svg` | `gen-icon-svg.ts` — resolves color tokens in `icon.template.svg` |
+| `viewer/public/favicon.png` | `gen-icon-pngs.ts` |
+| `mobile/ios/.../AppIcon.appiconset/*.png` (15 sizes) | `gen-icon-pngs.ts` |
+| `mobile/android/.../mipmap-*/ic_launcher.png` (5 densities) | `gen-icon-pngs.ts` |
+| `mobile/screenshots/feature-graphic.png` | `feature-graphic.ts` |
+| `mobile/ios/.../LaunchImage{,@2x,@3x}.png` | `gen-splash.ts` |
+
+**Font sourcing** — scripts in `brand/scripts/` embed fonts as base64 in SVG before rasterising with `@resvg/resvg-js`:
+- **Bytesized** (brand wordmark): `mobile/assets/fonts/Bytesized-Regular.ttf` — committed to the repo.
+- **Funnel Display Bold** (tagline/display text): `brand/fonts/FunnelDisplay-Bold.ttf` — extracted from `@fontsource/funnel-display` (woff → TTF) at install time; the package is pinned in `brand/scripts/bun.lock`.
+
 ### Container
 ```bash
 ./scripts/build-viewer-image-and-push   # build multi-platform image and push to aren55555/txtshr:latest
