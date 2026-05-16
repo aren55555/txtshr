@@ -39,13 +39,23 @@ const LandingPage = () => {
               <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Install</h3>
               <TabbedSelector tabs={[
                 { title: "Mobile", content: (
-                  <div class="bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 overflow-hidden">
-                    <a href="https://apps.apple.com/us/app/txtshr/id6767940916" target="_blank" rel="noopener noreferrer">
-                      <img src="/app-store-badge.svg" alt="Download on the App Store" class="h-10 w-auto" />
-                    </a>
-                    <a href="https://play.google.com/store/apps/details?id=run.txtshr.txtshr" target="_blank" rel="noopener noreferrer">
-                      <img src="/google-play-badge.svg" alt="Get it on Google Play" class="h-10 w-auto" />
-                    </a>
+                  <div class="bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 flex justify-center overflow-hidden">
+                    <div class="flex flex-col items-end gap-0.5">
+                      <div class="flex items-center gap-x-3">
+                        <a href="https://apps.apple.com/us/app/txtshr/id6767940916" target="_blank" rel="noopener noreferrer">
+                          <img src="/app-store-badge.svg" alt="Download on the App Store" class="h-10 w-auto" />
+                        </a>
+                        <a href="https://play.google.com/store/apps/details?id=run.txtshr.txtshr" target="_blank" rel="noopener noreferrer" class="opacity-50 grayscale pointer-events-none">
+                          <img src="/google-play-badge.svg" alt="Get it on Google Play" class="h-10 w-auto" />
+                        </a>
+                      </div>
+                      <p class="text-[10px] text-slate-500 text-center leading-tight w-[135px]">
+                        Closed testing.<br />
+                        <a href="https://groups.google.com/g/txtshr-testers/c/eqmQhE0Cu00" target="_blank" rel="noopener noreferrer" class="text-violet-400 underline hover:text-violet-300">
+                          Request access.
+                        </a>
+                      </p>
+                    </div>
                   </div>
                 )},
                 { title: "Mac (brew)", content: <TerminalBlock command="brew install aren55555/tap/txtshr" /> },
