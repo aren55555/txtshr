@@ -1,4 +1,5 @@
 mod brand
+mod container
 
 # List all available recipes
 [private]

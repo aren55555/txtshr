@@ -57,7 +57,8 @@ just brand::preview   # open brand/index.html in the browser
 
 ### Container
 ```bash
-./scripts/build-viewer-image-and-push   # build multi-platform image and push to aren55555/txtshr:latest
+just container::build   # build the viewer image (linux/amd64) as aren55555/txtshr:latest
+just container::push    # build and push to Docker Hub
 ```
 
 ## Architecture
