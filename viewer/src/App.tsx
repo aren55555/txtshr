@@ -60,6 +60,7 @@ const App = () => {
   const { rendererSpec } = params;
   const [appState, setAppState] = createSignal<AppState>(rendererSpec !== null ? "trust-check" : "entry");
   const [passphrase, setPassphrase] = createSignal("");
+  const [showPassphrase, setShowPassphrase] = createSignal(false);
   const [decryptedText, setDecryptedText] = createSignal("");
   const [errorMsg, setErrorMsg] = createSignal("");
   const [copied, setCopied] = createSignal(false);
@@ -294,17 +295,40 @@ const App = () => {
                 <label for="passphrase" class="block text-sm font-medium text-slate-300">
                   Passphrase
                 </label>
-                <input
-                  id="passphrase"
-                  type="password"
-                  autocomplete="off"
-                  autofocus
-                  value={passphrase()}
-                  onInput={(e) => setPassphrase(e.currentTarget.value)}
-                  disabled={appState() === "decrypting"}
-                  class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition disabled:opacity-50"
-                  placeholder="Enter passphrase…"
-                />
+                <div class="relative">
+                  <input
+                    id="passphrase"
+                    type={showPassphrase() ? "text" : "password"}
+                    autocomplete="off"
+                    autofocus
+                    value={passphrase()}
+                    onInput={(e) => setPassphrase(e.currentTarget.value)}
+                    disabled={appState() === "decrypting"}
+                    class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 pr-11 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition disabled:opacity-50"
+                    placeholder="Enter passphrase…"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassphrase((v) => !v)}
+                    class="absolute inset-y-0 right-0 flex items-center px-3 text-slate-400 hover:text-slate-200 transition focus:outline-none"
+                    aria-label={showPassphrase() ? "Hide passphrase" : "Show passphrase"}
+                  >
+                    <Show
+                      when={showPassphrase()}
+                      fallback={
+                        <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                          <path d="M10 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" />
+                          <path fill-rule="evenodd" d="M.664 10.59a1.651 1.651 0 0 1 0-1.186A10.004 10.004 0 0 1 10 3c4.257 0 7.893 2.66 9.336 6.41.147.381.146.804 0 1.186A10.004 10.004 0 0 1 10 17c-4.257 0-7.893-2.66-9.336-6.41ZM14 10a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z" clip-rule="evenodd" />
+                        </svg>
+                      }
+                    >
+                      <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M3.28 2.22a.75.75 0 0 0-1.06 1.06l14.5 14.5a.75.75 0 1 0 1.06-1.06l-1.745-1.745a10.029 10.029 0 0 0 3.3-4.38 1.651 1.651 0 0 0 0-1.185A10.004 10.004 0 0 0 9.999 3a9.956 9.956 0 0 0-4.744 1.194L3.28 2.22ZM7.752 6.69l1.092 1.092a2.5 2.5 0 0 1 3.374 3.373l1.091 1.092a4 4 0 0 0-5.557-5.557Z" clip-rule="evenodd" />
+                        <path d="M10.748 13.93 2.522 5.705A9.943 9.943 0 0 0 .664 9.4a1.651 1.651 0 0 0 0 1.186A10.004 10.004 0 0 0 10 17c.847 0 1.66-.13 2.42-.37l-1.673-1.673a4 4 0 0 1-.078-.027Z" />
+                      </svg>
+                    </Show>
+                  </button>
+                </div>
               </div>
               <Show when={appState() === "error"}>
                 <p role="alert" class="text-sm text-red-400 bg-red-400/10 border border-red-400/[16] rounded-lg px-4 py-2.5">
