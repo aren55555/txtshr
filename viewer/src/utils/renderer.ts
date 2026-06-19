@@ -43,9 +43,16 @@ export const formatRendererSpec = (spec: RendererSpec): string => {
 /**
  * Resolve a RendererSpec to a jsDelivr CDN URL.
  * Expects the renderer repo to publish ESM bundles at `dist/<name>.js`.
+ * "latest" is mutable, so a cache-busting query param is appended to bypass
+ * both the browser's HTTP cache and jsDelivr's edge cache; pinned versions
+ * are immutable and are left cacheable.
  */
 export const resolveRendererURL = (spec: RendererSpec): string => {
-  return `https://cdn.jsdelivr.net/gh/${spec.owner}/${spec.repo}@${spec.version}/dist/${spec.name}.js`;
+  const url = new URL(`https://cdn.jsdelivr.net/gh/${spec.owner}/${spec.repo}@${spec.version}/dist/${spec.name}.js`);
+  if (spec.version === "latest") {
+    url.searchParams.set("cb", crypto.randomUUID());
+  }
+  return url.toString();
 }
 
 export interface RemoteRenderer {
