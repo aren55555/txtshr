@@ -3,4 +3,8 @@
     <!-- Brand slate-950 — matches the launch_image background so the solid
          window color blends seamlessly past the centered splash panel. -->
     <color name="launch_bg">#020618</color>
+
+    <!-- Brand icon-bg — the adaptive-icon background layer, matching the fill
+         behind the shield in brand/icon.svg. -->
+    <color name="ic_launcher_background">#0B1120</color>
 </resources>

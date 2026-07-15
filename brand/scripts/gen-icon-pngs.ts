@@ -6,30 +6,39 @@ import { dirname, join } from 'node:path'
 
 const ROOT = join(import.meta.dir, '../..')
 const svg  = readFileSync(join(ROOT, 'brand/icon.svg'), 'utf8')
+const fgSvg = readFileSync(join(ROOT, 'brand/icon-foreground.svg'), 'utf8')
 
-// Cache renders by pixel width to avoid re-rendering duplicate sizes
-const cache = new Map<number, Buffer>()
-function render(px: number): Buffer {
-  if (!cache.has(px)) {
-    const r = new Resvg(svg, { fitTo: { mode: 'width', value: px } })
-    cache.set(px, Buffer.from(r.render().asPng()))
+// Build a width-cached renderer for a given SVG source
+const renderer = (source: string) => {
+  const cache = new Map<number, Buffer>()
+  return (px: number): Buffer => {
+    if (!cache.has(px)) {
+      const r = new Resvg(source, { fitTo: { mode: 'width', value: px } })
+      cache.set(px, Buffer.from(r.render().asPng()))
+    }
+    return cache.get(px)!
   }
-  return cache.get(px)!
 }
 
-function save(path: string, px: number) {
+const render   = renderer(svg)
+const renderFg = renderer(fgSvg)
+
+const saveWith = (fn: (px: number) => Buffer, path: string, px: number) => {
   mkdirSync(dirname(path), { recursive: true })
-  writeFileSync(path, render(px))
+  writeFileSync(path, fn(px))
 }
+
+const save = (path: string, px: number) => saveWith(render, path, px)
 
 // ── Live status board ──────────────────────────────────────────────────────
 const C = { reset: '\x1b[0m', green: '\x1b[32m', dim: '\x1b[2m' }
 
 interface Row { label: string; detail: string; done: boolean }
 const board: Row[] = [
-  { label: 'favicon', detail: 'generating…', done: false },
-  { label: 'ios    ', detail: 'generating…', done: false },
-  { label: 'android', detail: 'generating…', done: false },
+  { label: 'favicon ', detail: 'generating…', done: false },
+  { label: 'ios     ', detail: 'generating…', done: false },
+  { label: 'android ', detail: 'generating…', done: false },
+  { label: 'adaptive', detail: 'generating…', done: false },
 ]
 
 let painted = false
@@ -98,5 +107,22 @@ for (let n = 0; n < androidDensities.length; n++) {
   set(2, `${n + 1}/${androidDensities.length} — ${density}/ic_launcher.png`)
 }
 set(2, `${androidDensities.length} files — mipmap-{mdpi…xxxhdpi}`, true)
+
+// ── Android adaptive-icon foreground ─────────────────────────────────────────
+// Transparent-background shield for mipmap-anydpi-v26/ic_launcher.xml. Base is
+// 108dp (adaptive canvas); densities scale ×1/1.5/2/3/4.
+const adaptiveDensities: Array<[string, number]> = [
+  ['mipmap-mdpi',     108],
+  ['mipmap-hdpi',     162],
+  ['mipmap-xhdpi',    216],
+  ['mipmap-xxhdpi',   324],
+  ['mipmap-xxxhdpi',  432],
+]
+for (let n = 0; n < adaptiveDensities.length; n++) {
+  const [density, px] = adaptiveDensities[n]
+  saveWith(renderFg, join(androidDir, density, 'ic_launcher_foreground.png'), px)
+  set(3, `${n + 1}/${adaptiveDensities.length} — ${density}/ic_launcher_foreground.png`)
+}
+set(3, `${adaptiveDensities.length} files — ic_launcher_foreground`, true)
 
 process.stdout.write('\n')

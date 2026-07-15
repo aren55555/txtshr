@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Adaptive icon: solid brand-dark background + transparent-background shield
+     foreground (both generated from brand/icon.template.svg). Replaces the old
+     self-referential @mipmap/ic_launcher layers that rendered as a blank/default
+     icon on Android 8+. -->
 <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
-    <background android:drawable="@mipmap/ic_launcher"/>
-    <foreground android:drawable="@mipmap/ic_launcher"/>
+    <background android:drawable="@color/ic_launcher_background"/>
+    <foreground android:drawable="@mipmap/ic_launcher_foreground"/>
 </adaptive-icon>
