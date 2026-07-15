@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Brand slate-950 — matches the launch_image background so the solid
+         window color blends seamlessly past the centered splash panel. -->
+    <color name="launch_bg">#020618</color>
+</resources>
