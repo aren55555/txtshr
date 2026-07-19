@@ -45,7 +45,7 @@ const LandingPage = () => {
                         <a href="https://apps.apple.com/us/app/txtshr/id6767940916" target="_blank" rel="noopener noreferrer">
                           <img src="/app-store-badge.svg" alt="Download on the App Store" class="h-10 w-auto" />
                         </a>
-                        <a href="https://play.google.com/store/apps/details?id=run.txtshr.txtshr" target="_blank" rel="noopener noreferrer" class="opacity-50 grayscale pointer-events-none">
+                        <a href="https://play.google.com/store/apps/details?id=run.txtshr.txtshr" target="_blank" rel="noopener noreferrer">
                           <img src="/google-play-badge.svg" alt="Get it on Google Play" class="h-10 w-auto" />
                         </a>
                       </div>
