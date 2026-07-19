@@ -59,9 +59,12 @@ Encrypt(plaintext, passphrase) → payload
   public parameters (salt, nonce, …), and the ciphertext. It contains
   everything needed to decrypt *except* the passphrase.
 
-`Encrypt` **MUST** generate fresh, cryptographically random values for every
-per-message parameter (e.g. salt, nonce) on every invocation. Encrypting the
-same plaintext twice **MUST** yield distinct payloads.
+For versions that perform encryption, `Encrypt` **MUST** generate fresh,
+cryptographically random values for every per-message parameter (e.g. salt,
+nonce) on every invocation, so encrypting the same plaintext twice yields
+distinct payloads. For versions that do not encrypt (§4.0), the passphrase is
+ignored and the operation degenerates to encoding the plaintext into a
+payload.
 
 ### 2.2 Decrypt
 
@@ -71,9 +74,10 @@ Decrypt(payload, passphrase) → plaintext | error
 
 - Reads the version identifier from the payload and applies the corresponding
   scheme from §4.
-- **MUST** fail (not return garbage) when the passphrase is wrong, the payload
-  is malformed, or the payload has been tampered with. This implies every
-  version **MUST** use authenticated encryption.
+- **MUST** fail (not return garbage) when the payload is malformed, and — for
+  versions that encrypt — when the passphrase is wrong or the payload has been
+  tampered with. This implies every version that encrypts **MUST** use
+  authenticated encryption.
 - **MUST** reject payloads whose version identifier it does not recognize,
   with an error distinguishable from a wrong-passphrase failure.
 
@@ -109,6 +113,57 @@ version-specific payload keys. Versions are immutable once published: any
 change to the cryptography requires a new version identifier. Viewers
 **SHOULD** support all published versions indefinitely so old links keep
 working; producers **SHOULD** emit only the newest version.
+
+### 4.0 Version 0 (`v=0`) — raw, no encryption
+
+Version 0 carries the plaintext unencrypted. It exists so that the sharing
+and renderer machinery (§5) can be used without a passphrase; it provides
+**no confidentiality or integrity whatsoever** — anyone with the URL can read
+and a forger can fabricate its content. None of the security guarantees in §6
+apply to version 0 payloads.
+
+**Parameters**
+
+None. There is no key derivation, no cipher, no salt, and no nonce. The
+passphrase input to the abstract API is ignored.
+
+**Payload keys**
+
+| Key | Value |
+|-----|-------|
+| `c` | base64url(plaintext) |
+
+The plaintext is encoded (base64url, unpadded — same as all binary values in
+§3) rather than embedded literally so that arbitrary text survives the
+fragment's `key=value` syntax unambiguously and version 0 payloads remain
+shaped like every other version's.
+
+**Encrypt (v0)**
+
+1. Emit the payload with `v=0` and `c` = base64url(plaintext). No random
+   values are generated; the operation is deterministic.
+
+**Decrypt (v0)**
+
+1. Decode `c` from base64url; fail on malformed input.
+2. Interpret the result as UTF-8 text.
+
+**Producer acknowledgement**
+
+Producer-side tooling **MUST NOT** emit a non-encrypting version unless the
+user has explicitly and affirmatively acknowledged that the content will be
+shared without encryption. The form of the acknowledgement is
+implementation-defined (a command-line flag, a confirmation dialog, …), but
+it **MUST** be opt-in and off by default, **MUST** be given per invocation —
+producers **MUST NOT** allow it to be satisfied by a persistent default such
+as a configuration setting or a remembered choice — and **MUST** make the
+absence of encryption evident in its wording. Producers **MUST NOT** select
+a non-encrypting version implicitly (e.g. as a fallback when no passphrase
+is provided).
+
+Viewers **MUST NOT** prompt for a passphrase for version 0 payloads, and
+**SHOULD** indicate to the recipient that the content was not encrypted. All
+renderer trust requirements (§5) apply unchanged.
 
 ### 4.1 Version 1 (`v=1`)
 
@@ -187,7 +242,7 @@ the viewer:
 
 ## 6. Security Properties and Non-Goals
 
-**Guarantees**
+**Guarantees** (encrypting versions only — version 0 provides none of these)
 
 - Confidentiality and integrity of the plaintext against anyone lacking the
   passphrase, including the server operator.

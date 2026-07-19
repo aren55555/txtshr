@@ -1,5 +1,7 @@
 import { createResource, createSignal, Match, onMount, Show, Switch } from "solid-js";
-import { decryptV1 } from "./utils/crypto";
+import { base64urlDecode } from "./utils/base64url";
+import { Params, Scheme } from "./utils/scheme";
+import { schemes } from "./utils/registry";
 import { formatRendererSpec, loadRenderer, LoadedRenderer, parseRendererSpec, RendererSpec, resolveRendererURL } from "./utils/renderer";
 import { getTrustRecord, getTrustedRenderers, recordDiscovery, saveTrustRecord } from "./utils/renderer-store";
 import { relativeTime } from "./utils/relativeTime";
@@ -13,9 +15,8 @@ import LandingPage from "./components/LandingPage";
 import FragmentErrorToast from "./components/FragmentErrorToast";
 
 interface FragmentParams {
-  s: string;
-  n: string;
-  c: string;
+  scheme: Scheme;
+  payload: Params;
   rendererSpec: RendererSpec | null;
 }
 
@@ -27,18 +28,29 @@ const parseFragment = (): { ok: true; params: FragmentParams } | { ok: false; re
 
   const p = new URLSearchParams(hash);
   const v = p.get("v");
-  const s = p.get("s");
-  const n = p.get("n");
-  const c = p.get("c");
+  if (!v) return { ok: false, reason: "invalid" };
+
+  const scheme = schemes.get(v);
+  if (!scheme) return { ok: false, reason: "unsupported", version: v };
+
   const r = p.get("r");
-
-  if (!v || !s || !n || !c) return { ok: false, reason: "invalid" };
-  if (v !== "1") return { ok: false, reason: "unsupported", version: v };
-
   const rendererSpec = r !== null ? parseRendererSpec(r) : null;
   if (r !== null && rendererSpec === null) return { ok: false, reason: "invalid" };
 
-  return { ok: true, params: { s, n, c, rendererSpec } };
+  // Every key except the reserved "v" and "r" is a base64url-encoded payload
+  // parameter (SPEC.md §3); which of them are required is the scheme's call.
+  const payload: Params = {};
+  try {
+    for (const [key, value] of p) {
+      if (key === "v" || key === "r") continue;
+      payload[key] = base64urlDecode(value);
+    }
+  } catch {
+    return { ok: false, reason: "invalid" };
+  }
+  if (!scheme.requiredParams.every((key) => key in payload)) return { ok: false, reason: "invalid" };
+
+  return { ok: true, params: { scheme, payload, rendererSpec } };
 }
 
 
@@ -58,7 +70,11 @@ const App = () => {
 
   const { params } = parsed;
   const { rendererSpec } = params;
-  const [appState, setAppState] = createSignal<AppState>(rendererSpec !== null ? "trust-check" : "entry");
+  // Unencrypted content needs no passphrase: it is revealed on mount — after
+  // the renderer trust flow when the link carries a renderer (SPEC.md §4.0).
+  const [appState, setAppState] = createSignal<AppState>(
+    rendererSpec !== null ? "trust-check" : params.scheme.encrypts ? "entry" : "decrypting"
+  );
   const [passphrase, setPassphrase] = createSignal("");
   const [showPassphrase, setShowPassphrase] = createSignal(false);
   const [decryptedText, setDecryptedText] = createSignal("");
@@ -107,7 +123,7 @@ const App = () => {
         refs.cachedRenderer = loadResult.value;
         const stored = trust.status === "fulfilled" ? trust.value : null;
         if (stored && stored.hash === refs.cachedRenderer.hash) {
-          setAppState("entry"); // trusted, same hash — skip warning
+          proceedToContent(); // trusted, same hash — skip warning
         } else {
           refs.rendererHashChanged = stored !== null && stored.hash !== refs.cachedRenderer.hash;
           setAppState("warn");
@@ -119,6 +135,53 @@ const App = () => {
     });
   }
 
+  // Shared tail of both version flows: show the plaintext, running the
+  // renderer first if the link carries one.
+  const revealText = async (text: string) => {
+    setDecryptedText(text);
+    if (rendererSpec !== null) {
+      setAppState("rendering");
+      // Yield so Solid can mount the renderer container div before we use it.
+      await new Promise<void>((resolve) => setTimeout(resolve, 0));
+      try {
+        const loaded = refs.cachedRenderer ?? await loadRenderer(resolveRendererURL(rendererSpec));
+        const cleanup = loaded.renderer.render(refs.rendererContainer!, text);
+        refs.cleanupRenderer = cleanup ?? null;
+        await saveTrustRecord(formatRendererSpec(rendererSpec), loaded.hash);
+        setAppState("success");
+      } catch {
+        setAppState("renderer-error");
+      }
+    } else {
+      setAppState("success");
+    }
+  }
+
+  // Where the flow goes once the renderer trust gate (if any) is passed:
+  // encrypting schemes ask for the passphrase; non-encrypting ones have
+  // nothing to unlock and reveal directly.
+  const proceedToContent = () => {
+    if (params.scheme.encrypts) {
+      setAppState("entry");
+    } else {
+      void revealUnencrypted();
+    }
+  }
+
+  const revealUnencrypted = async () => {
+    try {
+      await revealText(await params.scheme.decode(params.payload, ""));
+    } catch {
+      setErrorMsg("This link's content is malformed.");
+      setAppState("error");
+    }
+  }
+
+  // Non-encrypting scheme with no renderer: reveal as soon as we mount.
+  if (rendererSpec === null && !params.scheme.encrypts) {
+    onMount(() => proceedToContent());
+  }
+
   const handleDecrypt = async (e: SubmitEvent) => {
     e.preventDefault();
     setAppState("decrypting");
@@ -126,24 +189,8 @@ const App = () => {
     // CPU-intensive PBKDF2 derivation begins.
     await new Promise<void>((resolve) => setTimeout(resolve, 0));
     try {
-      const text = await decryptV1(params.s, params.n, params.c, passphrase());
-      setDecryptedText(text);
-      if (rendererSpec !== null) {
-        setAppState("rendering");
-        // Yield so Solid can mount the renderer container div before we use it.
-        await new Promise<void>((resolve) => setTimeout(resolve, 0));
-        try {
-          const loaded = refs.cachedRenderer ?? await loadRenderer(resolveRendererURL(rendererSpec));
-          const cleanup = loaded.renderer.render(refs.rendererContainer!, text);
-          refs.cleanupRenderer = cleanup ?? null;
-          await saveTrustRecord(formatRendererSpec(rendererSpec), loaded.hash);
-          setAppState("success");
-        } catch {
-          setAppState("renderer-error");
-        }
-      } else {
-        setAppState("success");
-      }
+      const text = await params.scheme.decode(params.payload, passphrase());
+      await revealText(text);
     } catch {
       setErrorMsg("Decryption failed — check your passphrase and try again.");
       setAppState("error");
@@ -281,7 +328,7 @@ const App = () => {
                 </p>
               </Show>
               <button
-                onClick={() => setAppState("entry")}
+                onClick={proceedToContent}
                 class="w-full bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white font-semibold rounded-lg px-4 py-2.5 transition focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-slate-900"
               >
                 Proceed
@@ -354,6 +401,11 @@ const App = () => {
 
           <Match when={appState() === "success"}>
             <div class="space-y-4">
+              <Show when={!params.scheme.encrypts}>
+                <p class="text-xs text-amber-300 bg-amber-300/10 border border-amber-300/[16] rounded-lg px-4 py-2.5">
+                  This content was shared without encryption — anyone with the link can read it.
+                </p>
+              </Show>
               <Show when={activeRenderer() === null}>
                 <pre class="bg-slate-950 border border-slate-800 rounded-lg p-4 text-sm text-slate-200 overflow-auto max-h-96 whitespace-pre-wrap break-words font-mono leading-relaxed">{decryptedText()}</pre>
                 <button
@@ -368,6 +420,11 @@ const App = () => {
 
           <Match when={appState() === "renderer-error"}>
             <div class="space-y-4">
+              <Show when={!params.scheme.encrypts}>
+                <p class="text-xs text-amber-300 bg-amber-300/10 border border-amber-300/[16] rounded-lg px-4 py-2.5">
+                  This content was shared without encryption — anyone with the link can read it.
+                </p>
+              </Show>
               <p role="alert" class="text-sm text-amber-300 bg-amber-300/10 border border-amber-300/[16] rounded-lg px-4 py-2.5">
                 Renderer failed to load — showing plain text.
               </p>

@@ -9,7 +9,8 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/aren55555/txtshr/internal/crypto"
+	"github.com/aren55555/txtshr/internal/fragment"
+	"github.com/aren55555/txtshr/internal/scheme"
 	"golang.org/x/term"
 )
 
@@ -24,6 +25,7 @@ func main() {
 	text := flag.String("text", "", "Plaintext to encrypt (reads stdin if not provided)")
 	password := flag.String("password", "", "Passphrase for encryption (prompts interactively if not provided)")
 	versionFlag := flag.Bool("version", false, "Print version and exit")
+	insecure := flag.Bool("insecure", false, "Share WITHOUT encryption (v0): anyone with the URL can read the content")
 	rendererFlag := flag.String("renderer", "", "Renderer spec (owner/repo/name[@version])")
 	flag.StringVar(rendererFlag, "r", "", "Renderer spec (shorthand)")
 	flag.Parse()
@@ -67,28 +69,46 @@ func main() {
 		fatalf("no plaintext provided (use --text or pipe via stdin)")
 	}
 
-	// Resolve passphrase: flag > interactive prompt via /dev/tty.
-	var passphrase string
-	if *password != "" {
-		passphrase = *password
-	} else {
-		passphrase = promptPassphrase()
+	// --insecure selects the non-encrypting v0 scheme; the flag is the
+	// explicit per-invocation acknowledgement required by SPEC.md §4.0.
+	schemeVersion := scheme.Latest
+	if *insecure {
+		schemeVersion = scheme.V0
 	}
-	if passphrase == "" {
-		fatalf("passphrase cannot be empty")
+	impl := scheme.Registry[schemeVersion]
+
+	var passphrase string
+	if impl.Encrypts() {
+		// Resolve passphrase: flag > interactive prompt via /dev/tty.
+		if *password != "" {
+			passphrase = *password
+		} else {
+			passphrase = promptPassphrase()
+		}
+		if passphrase == "" {
+			fatalf("passphrase cannot be empty")
+		}
+	} else {
+		// Combining --insecure with --password is contradictory, so reject
+		// rather than guess intent.
+		if *password != "" {
+			fatalf("--insecure and --password are mutually exclusive")
+		}
+		fmt.Fprintln(os.Stderr, "warning: --insecure: content is NOT encrypted; anyone with the URL can read it")
 	}
 
-	fragment, err := crypto.Encrypt(plaintext, passphrase)
+	params, err := impl.Encode(plaintext, passphrase)
 	if err != nil {
-		fatalf("encrypting: %v", err)
+		fatalf("encoding: %v", err)
 	}
+	frag := fragment.Encode(schemeVersion, params)
 
 	if *rendererFlag != "" {
-		fragment += "&r=" + url.QueryEscape(*rendererFlag)
+		frag += "&r=" + url.QueryEscape(*rendererFlag)
 	}
 
 	base := strings.TrimRight(viewerURL, "/")
-	fmt.Printf("%s/#%s\n", base, fragment)
+	fmt.Printf("%s/#%s\n", base, frag)
 	fmt.Fprintln(os.Stderr, "note: this URL never expires")
 }
 
