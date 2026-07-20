@@ -1,3 +1,4 @@
+import Icons from "unplugin-icons/vite";
 import tailwindcss from "@tailwindcss/vite";
 import { execSync } from "child_process";
 import path from "path";
@@ -7,7 +8,7 @@ import solidPlugin from "vite-plugin-solid";
 const gitSha = process.env.GIT_SHA ?? execSync("git rev-parse HEAD").toString().trim();
 
 export default defineConfig({
-  plugins: [tailwindcss(), solidPlugin()],
+  plugins: [Icons({ compiler: "solid" }), tailwindcss(), solidPlugin()],
   resolve: {
     // Render the viewer's *actual* components, not copies.
     alias: {

@@ -11,8 +11,10 @@ import Spinner from "@viewer/components/Spinner";
 import TabbedSelector from "@viewer/components/TabbedSelector";
 import TerminalBlock from "@viewer/components/TerminalBlock";
 import Toast, { TOAST_ICONS } from "@viewer/components/Toast";
+import { ICONS } from "@viewer/icons";
 
 const SECTIONS = [
+  { id: "icons", title: "Icons" },
   { id: "toast", title: "Toast" },
   { id: "brand", title: "Brand" },
   { id: "card", title: "Card" },
@@ -73,10 +75,28 @@ const GalleryPage = () => {
       </nav>
 
       <main class="p-12 max-w-3xl">
+        <Section id="icons" title="Icons">
+          <div class="grid grid-cols-2 gap-8 sm:grid-cols-3 md:grid-cols-4">
+            <For each={Object.entries(ICONS)}>
+              {([key, icon]) => (
+                <div class="space-y-2">
+                  <div class="flex items-center justify-center h-16 rounded-lg bg-slate-900 border border-slate-800">
+                    <icon.component class="w-6 h-6 text-slate-300" />
+                  </div>
+                  <div class="space-y-0.5">
+                    <div class="text-xs font-mono text-slate-400">{key}</div>
+                    <div class="text-[11px] text-slate-600">{icon.usage}</div>
+                  </div>
+                </div>
+              )}
+            </For>
+          </div>
+        </Section>
+
         <Section id="toast" title="Toast">
           <Variant label="amber · persistent (unencrypted notice)">
             <FixedFrame>
-              <Toast color="amber" iconPath={TOAST_ICONS.unlocked}>
+              <Toast color="amber" icon={TOAST_ICONS.unlocked}>
                 Shared without encryption — anyone with the link can view it.
               </Toast>
             </FixedFrame>
@@ -85,7 +105,7 @@ const GalleryPage = () => {
             <FixedFrame>
               <Show when={fadeKey()} keyed>
                 {(_) => (
-                  <Toast color="red" iconPath={TOAST_ICONS.alert} fadeAfterMs={4000}>
+                  <Toast color="red" icon={TOAST_ICONS.alert} fadeAfterMs={4000}>
                     Invalid share link — make sure you copied the full URL including the{" "}
                     <code class="font-mono text-red-200">#fragment</code>.
                   </Toast>

@@ -1,7 +1,5 @@
 import { createResource, createSignal, Match, onMount, Show, Switch } from "solid-js";
-import EyeIcon from "~icons/heroicons/eye-20-solid";
-import EyeSlashIcon from "~icons/heroicons/eye-slash-20-solid";
-import CogIcon from "~icons/heroicons/cog-20-solid";
+import { ICONS, TOAST_ICONS } from "./icons";
 import { base64urlDecode } from "./utils/base64url";
 import { Params, Scheme } from "./utils/scheme";
 import { schemes } from "./utils/registry";
@@ -15,7 +13,7 @@ import RendererSettingsModal from "./components/RendererSettingsModal";
 import Spinner from "./components/Spinner";
 import Footer from "./components/Footer";
 import LandingPage from "./components/LandingPage";
-import Toast, { TOAST_ICONS } from "./components/Toast";
+import Toast from "./components/Toast";
 
 interface FragmentParams {
   scheme: Scheme;
@@ -306,7 +304,7 @@ const App = () => {
                 class="text-slate-400 hover:text-slate-200 transition focus:outline-none"
                 aria-label="Renderer settings"
               >
-                <CogIcon class="w-4 h-4" />
+                <ICONS.cog.component class="w-4 h-4" />
               </button>
             </div>
           : undefined
@@ -375,10 +373,10 @@ const App = () => {
                     <Show
                       when={showPassphrase()}
                       fallback={
-                        <EyeIcon class="w-5 h-5" />
+                        <ICONS.eye.component class="w-5 h-5" />
                       }
                     >
-                      <EyeSlashIcon class="w-5 h-5" />
+                      <ICONS.eyeSlash.component class="w-5 h-5" />
                     </Show>
                   </button>
                 </div>

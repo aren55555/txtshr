@@ -1,12 +1,7 @@
 import { createSignal, onMount, JSX } from "solid-js";
-import InfoCircleIcon from "~icons/heroicons/information-circle-20-solid";
-import LockOpenIcon from "~icons/heroicons/lock-open-20-solid";
+import { TOAST_ICONS } from "../icons";
 
-// Icon components available to toast call sites.
-export const TOAST_ICONS = {
-  alert: InfoCircleIcon,
-  unlocked: LockOpenIcon,
-} as const;
+export { TOAST_ICONS };
 
 // Full class strings per color — Tailwind's scanner only sees literal class
 // names, so these cannot be built from string interpolation. Every color
