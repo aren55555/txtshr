@@ -1,3 +1,4 @@
+import Icons from "unplugin-icons/vite";
 import tailwindcss from "@tailwindcss/vite";
 import { execSync } from "child_process";
 import { defineConfig } from "vite";
@@ -10,6 +11,11 @@ export default defineConfig({
   plugins: [
     tailwindcss(),
     solidPlugin(),
+    Icons({
+      compiler: "solid",
+      scale: 1,
+      defaultClass: "w-5 h-5",
+    }),
     {
       name: "inject-marketing",
       transformIndexHtml: (html) =>

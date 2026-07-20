@@ -1,4 +1,7 @@
 import { createResource, createSignal, Match, onMount, Show, Switch } from "solid-js";
+import EyeIcon from "~icons/heroicons/eye-20-solid";
+import EyeSlashIcon from "~icons/heroicons/eye-slash-20-solid";
+import CogIcon from "~icons/heroicons/cog-20-solid";
 import { base64urlDecode } from "./utils/base64url";
 import { Params, Scheme } from "./utils/scheme";
 import { schemes } from "./utils/registry";
@@ -61,7 +64,7 @@ const App = () => {
     return (
       <>
         <Show when={parsed.reason !== "empty"}>
-          <Toast color="red" iconPath={TOAST_ICONS.alert} fadeAfterMs={4000}>
+          <Toast color="red" icon={TOAST_ICONS.alert} fadeAfterMs={4000}>
             {parsed.reason === "unsupported"
               ? <>Unsupported link version (<code class="font-mono text-red-200">{parsed.version}</code>). Please use a newer viewer.</>
               : <>Invalid share link — make sure you copied the full URL including the <code class="font-mono text-red-200">#fragment</code>.</>
@@ -303,9 +306,7 @@ const App = () => {
                 class="text-slate-400 hover:text-slate-200 transition focus:outline-none"
                 aria-label="Renderer settings"
               >
-                <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd" d="M7.84 1.804A1 1 0 0 1 8.82 1h2.36a1 1 0 0 1 .98.804l.331 1.652a6.993 6.993 0 0 1 1.929 1.115l1.598-.54a1 1 0 0 1 1.186.447l1.18 2.044a1 1 0 0 1-.205 1.251l-1.267 1.113a7.047 7.047 0 0 1 0 2.228l1.267 1.113a1 1 0 0 1 .206 1.25l-1.18 2.045a1 1 0 0 1-1.187.447l-1.598-.54a6.993 6.993 0 0 1-1.929 1.115l-.33 1.652a1 1 0 0 1-.98.804H8.82a1 1 0 0 1-.98-.804l-.331-1.652a6.993 6.993 0 0 1-1.929-1.115l-1.598.54a1 1 0 0 1-1.186-.447l-1.18-2.044a1 1 0 0 1 .205-1.251l1.267-1.114a7.05 7.05 0 0 1 0-2.227L1.821 7.773a1 1 0 0 1-.206-1.25l1.18-2.045a1 1 0 0 1 1.187-.447l1.598.54A6.992 6.992 0 0 1 7.51 3.456l.33-1.652ZM10 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clip-rule="evenodd" />
-                </svg>
+                <CogIcon class="w-4 h-4" />
               </button>
             </div>
           : undefined
@@ -374,16 +375,10 @@ const App = () => {
                     <Show
                       when={showPassphrase()}
                       fallback={
-                        <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                          <path d="M10 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" />
-                          <path fill-rule="evenodd" d="M.664 10.59a1.651 1.651 0 0 1 0-1.186A10.004 10.004 0 0 1 10 3c4.257 0 7.893 2.66 9.336 6.41.147.381.146.804 0 1.186A10.004 10.004 0 0 1 10 17c-4.257 0-7.893-2.66-9.336-6.41ZM14 10a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z" clip-rule="evenodd" />
-                        </svg>
+                        <EyeIcon class="w-5 h-5" />
                       }
                     >
-                      <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M3.28 2.22a.75.75 0 0 0-1.06 1.06l14.5 14.5a.75.75 0 1 0 1.06-1.06l-1.745-1.745a10.029 10.029 0 0 0 3.3-4.38 1.651 1.651 0 0 0 0-1.185A10.004 10.004 0 0 0 9.999 3a9.956 9.956 0 0 0-4.744 1.194L3.28 2.22ZM7.752 6.69l1.092 1.092a2.5 2.5 0 0 1 3.374 3.373l1.091 1.092a4 4 0 0 0-5.557-5.557Z" clip-rule="evenodd" />
-                        <path d="M10.748 13.93 2.522 5.705A9.943 9.943 0 0 0 .664 9.4a1.651 1.651 0 0 0 0 1.186A10.004 10.004 0 0 0 10 17c.847 0 1.66-.13 2.42-.37l-1.673-1.673a4 4 0 0 1-.078-.027Z" />
-                      </svg>
+                      <EyeSlashIcon class="w-5 h-5" />
                     </Show>
                   </button>
                 </div>
@@ -456,7 +451,7 @@ const App = () => {
       {/* Security notice (SPEC.md §4.0): no fade — stays visible as long as
           the unencrypted content is shown. */}
       <Show when={showUnencryptedToast()}>
-        <Toast color="amber" iconPath={TOAST_ICONS.unlocked}>
+        <Toast color="amber" icon={TOAST_ICONS.unlocked}>
           Shared without encryption — anyone with the link can view it.
         </Toast>
       </Show>
