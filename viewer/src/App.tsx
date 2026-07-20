@@ -12,7 +12,7 @@ import RendererSettingsModal from "./components/RendererSettingsModal";
 import Spinner from "./components/Spinner";
 import Footer from "./components/Footer";
 import LandingPage from "./components/LandingPage";
-import FragmentErrorToast from "./components/FragmentErrorToast";
+import Toast, { TOAST_ICONS } from "./components/Toast";
 
 interface FragmentParams {
   scheme: Scheme;
@@ -61,7 +61,12 @@ const App = () => {
     return (
       <>
         <Show when={parsed.reason !== "empty"}>
-          <FragmentErrorToast reason={parsed.reason as "invalid" | "unsupported"} version={parsed.version} />
+          <Toast color="red" iconPath={TOAST_ICONS.alert} fadeAfterMs={4000}>
+            {parsed.reason === "unsupported"
+              ? <>Unsupported link version (<code class="font-mono text-red-200">{parsed.version}</code>). Please use a newer viewer.</>
+              : <>Invalid share link — make sure you copied the full URL including the <code class="font-mono text-red-200">#fragment</code>.</>
+            }
+          </Toast>
         </Show>
         <LandingPage />
       </>
@@ -241,6 +246,12 @@ const App = () => {
   };
 
 
+  // The unencrypted-content toast is position:fixed, so the layout doesn't
+  // know it exists — reserve top padding while it is shown so the card never
+  // sits underneath it.
+  const showUnencryptedToast = () =>
+    !params.scheme.encrypts && (appState() === "success" || appState() === "renderer-error");
+
   const activeRendererValue = () => {
     if (activeRenderer() === null) return "__plaintext__";
     const spec = activeRenderer()!;
@@ -250,7 +261,7 @@ const App = () => {
   };
 
   return (
-    <main class="min-h-screen flex flex-col items-center justify-center gap-4 p-4">
+    <main class={`min-h-screen flex flex-col items-center justify-center gap-4 p-4 ${showUnencryptedToast() ? "pt-28" : ""}`}>
       <Card>
         <Brand right={appState() === "success"
           ? <div class="flex items-center gap-2">
@@ -309,7 +320,7 @@ const App = () => {
 
           <Match when={appState() === "warn"}>
             <div class="space-y-4">
-              <div class="bg-amber-300/10 border border-amber-300/[16] rounded-lg px-4 py-3 space-y-2">
+              <div class="bg-amber-300/10 border border-amber-300/16 rounded-lg px-4 py-3 space-y-2">
                 <h3 class="text-sm font-semibold text-amber-300">Third-party renderer</h3>
                 <p class="text-sm text-amber-300/80 leading-relaxed">
                   This link uses a renderer from{" "}
@@ -378,7 +389,7 @@ const App = () => {
                 </div>
               </div>
               <Show when={appState() === "error"}>
-                <p role="alert" class="text-sm text-red-400 bg-red-400/10 border border-red-400/[16] rounded-lg px-4 py-2.5">
+                <p role="alert" class="text-sm text-red-400 bg-red-400/10 border border-red-400/16 rounded-lg px-4 py-2.5">
                   {errorMsg()}
                 </p>
               </Show>
@@ -401,11 +412,6 @@ const App = () => {
 
           <Match when={appState() === "success"}>
             <div class="space-y-4">
-              <Show when={!params.scheme.encrypts}>
-                <p class="text-xs text-amber-300 bg-amber-300/10 border border-amber-300/[16] rounded-lg px-4 py-2.5">
-                  This content was shared without encryption — anyone with the link can read it.
-                </p>
-              </Show>
               <Show when={activeRenderer() === null}>
                 <pre class="bg-slate-950 border border-slate-800 rounded-lg p-4 text-sm text-slate-200 overflow-auto max-h-96 whitespace-pre-wrap break-words font-mono leading-relaxed">{decryptedText()}</pre>
                 <button
@@ -420,12 +426,7 @@ const App = () => {
 
           <Match when={appState() === "renderer-error"}>
             <div class="space-y-4">
-              <Show when={!params.scheme.encrypts}>
-                <p class="text-xs text-amber-300 bg-amber-300/10 border border-amber-300/[16] rounded-lg px-4 py-2.5">
-                  This content was shared without encryption — anyone with the link can read it.
-                </p>
-              </Show>
-              <p role="alert" class="text-sm text-amber-300 bg-amber-300/10 border border-amber-300/[16] rounded-lg px-4 py-2.5">
+              <p role="alert" class="text-sm text-amber-300 bg-amber-300/10 border border-amber-300/16 rounded-lg px-4 py-2.5">
                 Renderer failed to load — showing plain text.
               </p>
               <pre class="bg-slate-950 border border-slate-800 rounded-lg p-4 text-sm text-slate-200 overflow-auto max-h-96 whitespace-pre-wrap break-words font-mono leading-relaxed">{decryptedText()}</pre>
@@ -452,6 +453,13 @@ const App = () => {
           <Spinner label="Loading renderer…" />
         </Show>
       </Card>
+      {/* Security notice (SPEC.md §4.0): no fade — stays visible as long as
+          the unencrypted content is shown. */}
+      <Show when={showUnencryptedToast()}>
+        <Toast color="amber" iconPath={TOAST_ICONS.unlocked}>
+          Shared without encryption — anyone with the link can view it.
+        </Toast>
+      </Show>
       <Footer />
       <Show when={settingsOpen()}>
         <RendererSettingsModal

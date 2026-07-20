@@ -3,6 +3,7 @@
 @import "@fontsource/funnel-display";
 @import "@fontsource/funnel-display/800.css";
 @import "tailwindcss";
+@import "./brand.css";
 
 @theme {
   --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;

@@ -1,0 +1,22 @@
+/* GENERATED — do not edit. Source of truth: brand/brand.json (just brand::rebuild). */
+@theme {
+  --color-emerald-400: oklch(76.5% 0.177 163.223);
+  --color-emerald-500: oklch(69.6% 0.17 162.48);
+  --color-emerald-600: oklch(59.6% 0.145 163.225);
+  --color-emerald-700: oklch(50.8% 0.118 165.612);
+  --color-violet-400: oklch(70.2% 0.183 293.541);
+  --color-slate-950: oklch(12.9% 0.042 264.695);
+  --color-slate-900: oklch(20.8% 0.042 265.755);
+  --color-slate-800: oklch(27.9% 0.041 260.031);
+  --color-slate-700: oklch(37.2% 0.044 257.287);
+  --color-slate-600: oklch(44.6% 0.043 257.281);
+  --color-slate-500: oklch(55.4% 0.046 257.417);
+  --color-slate-400: oklch(70.4% 0.04 256.788);
+  --color-slate-300: oklch(86.9% 0.022 252.894);
+  --color-slate-200: oklch(92.9% 0.013 255.508);
+  --color-slate-100: oklch(96.8% 0.007 247.896);
+  --color-amber-300: oklch(87.9% 0.169 91.605);
+  --color-red-400: oklch(70.4% 0.191 22.216);
+  --color-red-200: oklch(88.5% 0.062 18.334);
+  --color-icon-bg: oklch(18.0% 0.0325 266.625);
+}

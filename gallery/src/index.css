@@ -1,0 +1,7 @@
+/* The gallery uses the viewer's exact CSS pipeline: Tailwind + the generated
+   brand theme (viewer/src/brand.css ← brand/brand.json). */
+@import "../../viewer/src/index.css";
+
+/* Tailwind only auto-scans this project's root — the aliased viewer sources
+   live outside it, so their utility classes must be declared as a source. */
+@source "../../viewer/src";

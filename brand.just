@@ -2,8 +2,8 @@
 default:
     @just --justfile "{{source_file()}}" --list
 
-# Regenerate all brand assets (brand page, SVG, icons, splash screens, feature graphic)
-rebuild: _page _icon-svg-generate _icon-rasterize-svg-to-pngs _feature-graphic _splash
+# Regenerate all brand assets (brand page, SVG, icons, splash screens, feature graphic, viewer theme)
+rebuild: _page _icon-svg-generate _icon-rasterize-svg-to-pngs _feature-graphic _splash _theme-css
 
 # Open the brand reference page in the browser
 preview:
@@ -15,6 +15,13 @@ _page:
     cd "{{justfile_directory()}}/brand/scripts"
     bun install --silent
     bun run gen-brand.ts
+
+_theme-css:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    cd "{{justfile_directory()}}/brand/scripts"
+    bun install --silent
+    bun run gen-theme-css.ts
 
 _icon-svg-generate:
     #!/usr/bin/env bash
