@@ -30,6 +30,18 @@ You'll get back a URL like `https://txtshr.run/#...`. Send it to whoever needs i
 
 The recipient opens the URL, enters the passphrase, and sees the plaintext — no account, no app, just a browser.
 
+### Sharing without encryption
+
+For non-sensitive content, you can skip encryption and share a simpler link:
+
+```bash
+echo "Check out this link" | txtshr --insecure
+```
+
+This generates a URL with the plaintext embedded — no passphrase required. The recipient just opens it and sees the content immediately. Use this for sharing temporary links that don't need secrecy, since anyone with the URL can read it.
+
+**Note:** `--insecure` is mutually exclusive with passphrases — combining them will error.
+
 ## How it works
 
 1. Your text is encrypted locally with AES-256-GCM, using a key derived from your passphrase via PBKDF2-SHA256 (600,000 iterations)
