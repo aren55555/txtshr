@@ -19,6 +19,10 @@ builds:
 archives:
   - formats: [tar.gz]
     name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}"
+    files:
+      - LICENSE
+      - NOTICE
+      - README.md
 
 checksum:
   name_template: checksums.txt
@@ -32,6 +36,7 @@ brews:
     directory: Formula
     homepage: https://github.com/aren55555/txtshr
     description: Secure, zero-knowledge text sharing CLI
+    license: AGPL-3.0-or-later
     install: |
       bin.install "txtshr"
     test: |

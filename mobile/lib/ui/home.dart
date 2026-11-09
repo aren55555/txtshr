@@ -160,9 +160,22 @@ class _InfoDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text('About'),
-      content: const Text(
-        'Share encrypted text via a URL. The passphrase never leaves your device — '
-        'decryption happens entirely in your browser. Even the server can\'t read your message.',
+      content: const Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Share encrypted text via a URL. The passphrase never leaves your device — '
+            'decryption happens entirely in your browser. Even the server can\'t read your message.',
+          ),
+          SizedBox(height: 16),
+          Text(
+            'txtshr by Aren Patel\n'
+            'Free software under the GNU AGPL v3 or later.\n'
+            'Source: github.com/aren55555/txtshr',
+            style: TextStyle(fontSize: 12),
+          ),
+        ],
       ),
       actions: [
         TextButton(

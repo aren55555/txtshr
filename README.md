@@ -137,3 +137,11 @@ Then point the CLI at your instance:
 ```bash
 TXTSHR_VIEWER_URL=https://your-viewer.example.com txtshr --text "hello"
 ```
+
+## License
+
+txtshr is free software, licensed under the [GNU Affero General Public License v3.0 or later](LICENSE), with one additional attribution term under section 7(b): any covered work must keep the author credit **"Based on txtshr by Aren Patel"** in its legal notices (About screen, footer, etc.). See [NOTICE](NOTICE) for the exact terms.
+
+In short, if you modify txtshr and distribute it, or run a modified viewer for other people, you must publish your source under the same license and credit the original.
+
+The [`txtshr-renderer`](renderer-types/) types package is MIT-licensed, so third-party renderers can use any license.
