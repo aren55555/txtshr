@@ -35,19 +35,29 @@ android {
         versionName = flutter.versionName
     }
 
-    signingConfigs {
-        create("release") {
-            keyAlias = keyProperties["keyAlias"] as String
-            keyPassword = keyProperties["keyPassword"] as String
-            storeFile = keyProperties["storeFile"]?.let { rootProject.file(it) }
-            storePassword = keyProperties["storePassword"] as String
+    // Signing is optional: without key.properties (e.g. F-Droid's build server,
+    // which signs with its own key) the release build is produced unsigned.
+    if (keyPropertiesFile.exists()) {
+        signingConfigs {
+            create("release") {
+                keyAlias = keyProperties["keyAlias"] as String
+                keyPassword = keyProperties["keyPassword"] as String
+                storeFile = keyProperties["storeFile"]?.let { rootProject.file(it) }
+                storePassword = keyProperties["storePassword"] as String
+            }
         }
     }
 
     buildTypes {
         release {
-            signingConfig = signingConfigs.getByName("release")
+            signingConfig = signingConfigs.findByName("release")
         }
+    }
+
+    // The dependency-metadata block is encrypted with a Google key and is
+    // flagged by F-Droid's scanner; keep it out of APKs (Play bundles keep it).
+    dependenciesInfo {
+        includeInApk = false
     }
 }
 

@@ -39,6 +39,7 @@ const board: Row[] = [
   { label: 'ios     ', detail: 'generating…', done: false },
   { label: 'android ', detail: 'generating…', done: false },
   { label: 'adaptive', detail: 'generating…', done: false },
+  { label: 'fdroid  ', detail: 'generating…', done: false },
 ]
 
 let painted = false
@@ -124,5 +125,9 @@ for (let n = 0; n < adaptiveDensities.length; n++) {
   set(3, `${n + 1}/${adaptiveDensities.length} — ${density}/ic_launcher_foreground.png`)
 }
 set(3, `${adaptiveDensities.length} files — ic_launcher_foreground`, true)
+
+// ── F-Droid listing icon (fastlane metadata) ─────────────────────────────────
+save(join(ROOT, 'fastlane/metadata/android/en-US/images/icon.png'), 512)
+set(4, '1 file — fastlane/.../images/icon.png (512×512)', true)
 
 process.stdout.write('\n')

@@ -97,6 +97,31 @@ re-upload needed.
    managed publishing is off, it **auto-publishes** to the track when approved.
 4. To cancel before it publishes: **Publishing overview → Remove changes**.
 
+## F-Droid
+
+The app is published on [F-Droid](https://f-droid.org/packages/run.txtshr.txtshr/), which
+builds it **from source** on its own servers and signs it with F-Droid's key.
+
+- Build recipe: [`fdroid/run.txtshr.txtshr.yml`](fdroid/run.txtshr.txtshr.yml) (the
+  canonical copy lives in [fdroiddata](https://gitlab.com/fdroid/fdroiddata)).
+- Store listing (text, icon, feature graphic, screenshots, changelogs):
+  [`fastlane/metadata/android/en-US/`](../fastlane/metadata/android/en-US/) at the
+  repo root. Icon and feature graphic are written by `just brand::rebuild`.
+- Release signing is optional: without `android/key.properties` the release
+  APK is built unsigned (as F-Droid requires).
+
+### Releasing to F-Droid
+
+F-Droid polls the repo for `mobile-v*` tags and builds them automatically:
+
+1. Bump `version:` in `pubspec.yaml` (e.g. `1.0.3+6`).
+2. Add release notes at `fastlane/metadata/android/en-US/changelogs/<versionCode>.txt`.
+3. Commit, then `just mobile::tag` and push the tag it prints.
+
+The update usually appears on F-Droid within a few days. Installs from Play and
+F-Droid are signed by different keys, so users can't switch between them
+without reinstalling.
+
 ## Testers
 
 - **Internal testing** uses **email lists** (Testers tab → *Create email list*).

@@ -1,0 +1,57 @@
+# F-Droid build recipe for txtshr.
+#
+# This file is the source for the one-time merge request to
+# https://gitlab.com/fdroid/fdroiddata (copy to metadata/run.txtshr.txtshr.yml).
+# After it is merged, F-Droid's checkupdates bot watches for `mobile-v*` tags,
+# reads the version from mobile/pubspec.yaml, and adds/builds new versions
+# automatically — no further changes to fdroiddata are needed.
+#
+# Store listing text and images come from fastlane/metadata/android/ in this repo.
+
+Categories:
+  - Security
+  - Internet
+License: AGPL-3.0-or-later
+AuthorName: Aren Patel
+AuthorWebSite: https://arenpatel.com
+WebSite: https://txtshr.run
+SourceCode: https://github.com/aren55555/txtshr
+IssueTracker: https://github.com/aren55555/txtshr/issues
+
+AutoName: txtshr
+
+RepoType: git
+Repo: https://github.com/aren55555/txtshr.git
+
+Builds:
+  - versionName: 1.0.3
+    versionCode: 6
+    commit: mobile-v1.0.3 # fdroiddata reviewers prefer the full commit hash here
+    subdir: mobile
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@stable
+    rm:
+      - mobile/ios
+      - mobile/macos
+      - mobile/linux
+      - mobile/windows
+      - mobile/web
+    prebuild:
+      - flutterVersion=$(sed -n -E 's/^flutter *= *"(.*)"/\1/p' mise.toml)
+      - '[[ $flutterVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+    scandelete:
+      - mobile/.pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags ^mobile-v
+UpdateCheckData: mobile/pubspec.yaml|version:\s.+\+(\d+)|.|version:\s(.+)\+
+CurrentVersion: 1.0.3
+CurrentVersionCode: 6

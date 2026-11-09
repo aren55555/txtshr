@@ -59,5 +59,10 @@ const resvg = new Resvg(svg, {
   },
 });
 const png = resvg.render().asPng();
-writeFileSync("../../mobile/screenshots/feature-graphic.png", png);
-console.log("Written: mobile/screenshots/feature-graphic.png");
+for (const out of [
+  "mobile/screenshots/feature-graphic.png",
+  "fastlane/metadata/android/en-US/images/featureGraphic.png", // F-Droid listing
+]) {
+  writeFileSync(`../../${out}`, png);
+  console.log(`Written: ${out}`);
+}

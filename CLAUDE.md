@@ -49,6 +49,7 @@ just brand::preview   # open brand/index.html in the browser
 | `mobile/ios/.../AppIcon.appiconset/*.png` (15 sizes) | `gen-icon-pngs.ts` |
 | `mobile/android/.../mipmap-*/ic_launcher.png` (5 densities) | `gen-icon-pngs.ts` |
 | `mobile/screenshots/feature-graphic.png` | `feature-graphic.ts` |
+| `fastlane/metadata/android/en-US/images/{icon,featureGraphic}.png` (F-Droid listing) | `gen-icon-pngs.ts`, `feature-graphic.ts` |
 | `mobile/ios/.../LaunchImage{,@2x,@3x}.png` | `gen-splash.ts` |
 
 **Font sourcing** — scripts in `brand/scripts/` embed fonts as base64 in SVG before rasterising with `@resvg/resvg-js`:

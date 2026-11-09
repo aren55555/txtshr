@@ -1,0 +1,14 @@
+<p>txtshr turns sensitive text into an encrypted link. Type or paste your text, choose a passphrase, and share the link. Send the passphrase separately (in person, over Signal, etc.). The recipient opens the link in any browser and decrypts it there. They don't need an account or an app.</p>
+
+<p><b>Zero-knowledge by design</b></p>
+<ul>
+<li>Encryption happens on your device using PBKDF2-SHA256 (600,000 iterations) and AES-256-GCM.</li>
+<li>The encrypted message lives in the URL fragment (after the <i>#</i>), which browsers never send to a server. The server never sees your text or your passphrase.</li>
+<li>There is no server-side storage, so links never expire.</li>
+<li>The app does not request network access and contains no trackers or analytics.</li>
+</ul>
+
+<p><b>Works with the rest of txtshr</b></p>
+<p>Links are compatible with the txtshr command-line tool and the web viewer at txtshr.run, which you can also self-host. Optional custom renderers let the recipient view the decrypted text formatted, for example as Markdown.</p>
+
+<p>txtshr is free software, licensed under the GNU AGPL v3 or later.</p>
