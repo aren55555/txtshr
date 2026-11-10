@@ -1,16 +1,20 @@
-# F-Droid build recipe for txtshr.
+# F-Droid build recipe for txtshr, based on fdroiddata templates/build-flutter.yml.
 #
-# This file is the source for the one-time merge request to
-# https://gitlab.com/fdroid/fdroiddata (copy to metadata/run.txtshr.txtshr.yml).
-# After it is merged, F-Droid's checkupdates bot watches for `mobile-v*` tags,
-# reads the version from mobile/pubspec.yaml, and adds/builds new versions
-# automatically — no further changes to fdroiddata are needed.
+# This file is the source for https://gitlab.com/fdroid/fdroiddata
+# (metadata/run.txtshr.txtshr.yml). F-Droid's checkupdates bot watches for
+# `mobile-v*` tags, reads the version from mobile/pubspec.yaml, and adds and
+# builds new versions automatically.
+#
+# One APK per ABI. Flutter's --split-per-abi sets versionCode to
+# abi * 1000 + pubspec build number (armeabi-v7a 1, arm64-v8a 2, x86_64 4),
+# which the VercodeOperation entries below mirror.
 #
 # Store listing text and images come from fastlane/metadata/android/ in this repo.
+# COMMIT is replaced with the full hash of the mobile-v<version> tag on submission.
 
 Categories:
-  - Security
   - Internet
+  - Security
 License: AGPL-3.0-or-later
 AuthorName: Aren Patel
 AuthorWebSite: https://arenpatel.com
@@ -25,33 +29,89 @@ Repo: https://github.com/aren55555/txtshr.git
 
 Builds:
   - versionName: 1.0.3
-    versionCode: 6
-    commit: mobile-v1.0.3 # fdroiddata reviewers prefer the full commit hash here
+    versionCode: 1006
+    commit: COMMIT
     subdir: mobile
-    output: build/app/outputs/flutter-apk/app-release.apk
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
     srclibs:
       - flutter@stable
     rm:
       - mobile/ios
-      - mobile/macos
       - mobile/linux
-      - mobile/windows
+      - mobile/macos
       - mobile/web
+      - mobile/windows
     prebuild:
       - flutterVersion=$(sed -n -E 's/^flutter *= *"(.*)"/\1/p' mise.toml)
       - '[[ $flutterVersion ]]'
       - git -C $$flutter$$ checkout -f $flutterVersion
       - export PUB_CACHE=$(pwd)/.pub-cache
       - $$flutter$$/bin/flutter config --no-analytics
-      - $$flutter$$/bin/flutter pub get
+      - $$flutter$$/bin/flutter pub get --enforce-lockfile
     scandelete:
       - mobile/.pub-cache
     build:
       - export PUB_CACHE=$(pwd)/.pub-cache
-      - $$flutter$$/bin/flutter build apk --release
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm"
+
+  - versionName: 1.0.3
+    versionCode: 2006
+    commit: COMMIT
+    subdir: mobile
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+    rm:
+      - mobile/ios
+      - mobile/linux
+      - mobile/macos
+      - mobile/web
+      - mobile/windows
+    prebuild:
+      - flutterVersion=$(sed -n -E 's/^flutter *= *"(.*)"/\1/p' mise.toml)
+      - '[[ $flutterVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get --enforce-lockfile
+    scandelete:
+      - mobile/.pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64"
+
+  - versionName: 1.0.3
+    versionCode: 4006
+    commit: COMMIT
+    subdir: mobile
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+    rm:
+      - mobile/ios
+      - mobile/linux
+      - mobile/macos
+      - mobile/web
+      - mobile/windows
+    prebuild:
+      - flutterVersion=$(sed -n -E 's/^flutter *= *"(.*)"/\1/p' mise.toml)
+      - '[[ $flutterVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get --enforce-lockfile
+    scandelete:
+      - mobile/.pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-x64"
 
 AutoUpdateMode: Version
 UpdateCheckMode: Tags ^mobile-v
+VercodeOperation:
+  - 1000 + %c
+  - 2000 + %c
+  - 4000 + %c
 UpdateCheckData: mobile/pubspec.yaml|version:\s.+\+(\d+)|.|version:\s(.+)\+
 CurrentVersion: 1.0.3
-CurrentVersionCode: 6
+CurrentVersionCode: 4006
